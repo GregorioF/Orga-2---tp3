@@ -1,4 +1,4 @@
-# ** por compatibilidad se omiten tildes **
+#rm  ** por compatibilidad se omiten tildes **
 # ==============================================================================
 # TRABAJO PRACTICO 3 - System Programming - ORGANIZACION DE COMPUTADOR II - FCEN
 # ==============================================================================
@@ -195,6 +195,7 @@ clean:
 	rm -f *.tsk
 	rm -f $(DISK_IMG)
 	rm -f genbin
+	rm -rf defines.h
 	rm -rf Makefile.taskwars
 	@echo ''
 

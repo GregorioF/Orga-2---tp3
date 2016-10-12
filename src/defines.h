@@ -27,6 +27,11 @@
 /* Indices en la gdt */
 /* -------------------------------------------------------------------------- */
 #define GDT_IDX_NULL_DESC           0
+#define GDT_COD_L0 18
+#define GDT_COD_L3 19
+#define GDT_DAT_L0 20
+#define GDT_DAT_L3 21 
+#define GDT_VID_L0 22
 
 /* Direcciones de memoria */
 /* -------------------------------------------------------------------------- */

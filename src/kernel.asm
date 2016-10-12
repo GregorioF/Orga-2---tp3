@@ -42,24 +42,48 @@ start:
     ; Deshabilitar interrupciones
     cli
 
-    ; xchg bx, bx
-
     ; Imprimir mensaje de bienvenida
-    imprimir_texto_mr iniciando_mr_msg, iniciando_mr_len, 0x07, 0, 0
+    ;imprimir_texto_mr iniciando_mr_msg, iniciando_mr_len, 0x07, 0, 0
 
 
     ; habilitar A20
-
+	call habilitar_A20
     ; cargar la GDT
+	
+	
+	lgdt [GDT_DESC]
 
-    ; setear el bit PE del registro CR0
-
-    ; pasar a modo protegido
-
+	; setear el bit PE del registro CR0
+	
+	mov eax,cr0 
+	or eax,1 
+	mov cr0,eax
+	
+	; pasar a modo protegido
+	jmp 18<<3:mp
+		
+BITS 32
+	mp:
+	
+	xor eax, eax
+	mov ax, 0xa0
+	mov ds, ax
+	mov es, ax
+	mov gs, ax
+	mov ss, ax
+	xchg bx, bx
+	mov ax, 22 << 3
+	mov fs, ax
+		
     ; acomodar los segmentos
 
     ; setear la pila
+	mov esp, 0x27000
+	mov ebp, esp
+		
+   imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 0, 0
 
+	
     ; pintar pantalla, todos los colores, que bonito!
 
     ; inicializar el manejador de memoria
