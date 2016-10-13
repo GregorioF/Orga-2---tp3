@@ -71,7 +71,6 @@ BITS 32
 	mov es, ax
 	mov gs, ax
 	mov ss, ax
-	xchg bx, bx
 	mov ax, 22 << 3
 	mov fs, ax
 		
@@ -103,6 +102,10 @@ BITS 32
     ; inicializar el scheduler
 
     ; inicializar la IDT
+
+    lidt [IDT_DESC]
+    call idt_inicializar
+    xchg bx, bx
 
     ; configurar controlador de interrupciones
 
