@@ -18,6 +18,8 @@ extern idt_inicializar
 ;; PIC
 extern resetear_pic
 extern habilitar_pic
+extern screen_pintar_pantalla
+
 
 
 ;; Saltear seccion de datos
@@ -43,7 +45,7 @@ start:
     cli
 
     ; Imprimir mensaje de bienvenida
-    ;imprimir_texto_mr iniciando_mr_msg, iniciando_mr_len, 0x07, 0, 0
+    imprimir_texto_mr iniciando_mr_msg, iniciando_mr_len, 0x07, 0, 0
 
 
     ; habilitar A20
@@ -64,7 +66,8 @@ start:
 		
 BITS 32
 	mp:
-	
+	xchg bx, bx
+
 	xor eax, eax
 	mov ax, 0xa0
 	mov ds, ax
@@ -80,8 +83,7 @@ BITS 32
 	mov esp, 0x27000
 	mov ebp, esp
 		
-   imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len, 0x07, 0, 0
-
+		call screen_pintar_pantalla
 	
     ; pintar pantalla, todos los colores, que bonito!
 
