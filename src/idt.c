@@ -5,7 +5,9 @@
   definicion de las rutinas de atencion de interrupciones
 */
 
+#include "defines.h"
 #include "idt.h"
+#include "isr.h"
 
 
 idt_entry idt[255] = {};
@@ -17,12 +19,12 @@ idt_descriptor IDT_DESC = {
 
 #define IDT_ENTRY(numero)                                                                                        \
     idt[numero].offset_0_15 = (unsigned short) ((unsigned int)(&_isr ## numero) & (unsigned int) 0xFFFF);        \
-    idt[numero].segsel = (unsigned short) 0x00;                                                                  \
-    idt[numero].attr = (unsigned short) 0x4700;                                                                  \
+    idt[numero].segsel = (unsigned short) 0x90;                                                                  \
+    idt[numero].attr = (unsigned short) 0x8E00;                                                                  \
     idt[numero].offset_16_31 = (unsigned short) ((unsigned int)(&_isr ## numero) >> 16 & (unsigned int) 0xFFFF);
 
 void idt_inicializar() {
-    /*
+    
 
     IDT_ENTRY(0);
     IDT_ENTRY(1);
@@ -44,7 +46,8 @@ void idt_inicializar() {
     IDT_ENTRY(17);
     IDT_ENTRY(18);
     IDT_ENTRY(19);
+ 
   
-    */
+    
 }
 

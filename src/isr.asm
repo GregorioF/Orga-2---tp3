@@ -6,11 +6,14 @@
 
 %include "imprimir.mac"
 
+
 BITS 32
 
 
 ;; PIC
 extern fin_intr_pic1
+extern printear
+extern limpiar_pantalla
 
 
 ;;
@@ -23,6 +26,11 @@ global _isr%1
 _isr%1:
 .loopear:
     ; To Infinity And Beyond!!
+    
+    call limpiar_pantalla
+    mov edi, %1
+    push edi
+    call printear
     mov eax, 0xFFF2
     mov ebx, 0xFFF2
     mov ecx, 0xFFF2
@@ -42,8 +50,27 @@ reloj:                  db '|/-\'
 ;; Rutina de atención de las EXCEPCIONES
 ;; -------------------------------------------------------------------------- ;;
 ISR 0
+ISR 1
+ISR 2
+ISR 3
+ISR 4
+ISR 5
+ISR 6
+ISR 7
+ISR 8
+ISR 9
+ISR 10
+ISR 11
+ISR 12
+ISR 13
+ISR 14
+ISR 15
+ISR 16
+ISR 17
+ISR 18
+ISR 19
 
-ISR 32
+
 ;;
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;

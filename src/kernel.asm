@@ -66,7 +66,6 @@ start:
 		
 BITS 32
 	mp:
-	xchg bx, bx
 
 	xor eax, eax
 	mov ax, 0xa0
@@ -83,7 +82,7 @@ BITS 32
 	mov esp, 0x27000
 	mov ebp, esp
 		
-		call screen_pintar_pantalla
+	call screen_pintar_pantalla
 	
     ; pintar pantalla, todos los colores, que bonito!
 
@@ -104,11 +103,14 @@ BITS 32
     ; inicializar el scheduler
 
     ; inicializar la IDT
+	
+	call idt_inicializar
 
     lidt [IDT_DESC]
-    call idt_inicializar
-    xchg bx, bx
-
+   
+	int 13
+   
+   
     ; configurar controlador de interrupciones
 
     ; cargar la tarea inicial
