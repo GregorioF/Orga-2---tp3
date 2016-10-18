@@ -9,7 +9,7 @@
 #include "colors.h"
 
 static const char* a []= {
-"DIVIDE ERROR", "RESERVED", "NMI Interrupt", "Breakpoint", "Overflow", "BOUND Range Exceeded", "Invalid Opcode (Undefined Opcode)", "Device Not Available (No Match Coprocessor)", "Double Fault", "Coprocessor Segment Overrun (reserved)", "Invalid TSS", "Segment Not Present", "Stack-Segment Fault", "General Protection", "Page Fault", "(Intel reserved. Do not use.)", "x87 FPU Floating-Point Error (Math Fault)", "Alignment Check", "Machine Check", "SIMD Floating-Point Exception", "Intel reserved. Do not use.", "User Defined (Non-reserved) Interrupts"
+"ERROR 0: DIVIDE ERROR", "ERROR 1: RESERVED", "ERROR 2: NMI Interrupt", "ERROR 3: Breakpoint", "ERROR 4: Overflow", "ERROR 5: BOUND Range Exceeded", "ERROR 6: Invalid Opcode (Undefined Opcode)", "ERROR 7: Device Not Available (No Match Coprocessor)", "ERROR 8: Double Fault", "ERROR 9: Coprocessor Segment Overrun (reserved)", "ERROR 10: Invalid TSS", "ERROR 11: Segment Not Present", "ERROR 12: Stack-Segment Fault", "ERROR 13: General Protection", "ERROR 14: Page Fault", "ERROR 15: (Intel reserved. Do not use.)", "ERROR 16: x87 FPU Floating-Point Error (Math Fault)", "ERROR 17: Alignment Check", "ERROR 18: Machine Check", "ERROR 19: SIMD Floating-Point Exception"
 };
 
 void printear(unsigned int x){
