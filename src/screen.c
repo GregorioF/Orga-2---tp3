@@ -12,6 +12,74 @@ static const char* a []= {
 "DIVIDE ERROR", "RESERVED", "NMI Interrupt", "Breakpoint", "Overflow", "BOUND Range Exceeded", "Invalid Opcode (Undefined Opcode)", "Device Not Available (No Match Coprocessor)", "Double Fault", "Coprocessor Segment Overrun (reserved)", "Invalid TSS", "Segment Not Present", "Stack-Segment Fault", "General Protection", "Page Fault", "(Intel reserved. Do not use.)", "x87 FPU Floating-Point Error (Math Fault)", "Alignment Check", "Machine Check", "SIMD Floating-Point Exception", "Intel reserved. Do not use.", "User Defined (Non-reserved) Interrupts"
 };
 
+
+void imprimir_texto(char* palabra, int n, int currFila, int currCol ){
+	
+	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+	
+	int i = currCol;
+	for( i = currCol; i < n+currCol ; i ++ ){
+		ca temp = {.c = palabra[i-currCol], .a = C_BG_BLACK  | C_FG_WHITE};
+		p[currFila][i] = temp;
+	}
+		
+}
+
+void imprimir_nombre_del_grupo(){
+	char* c = "El Arquitecto";
+	imprimir_texto( c, 13, 0 ,  1);
+		
+}
+
+void imprimir_banderitas(){
+	
+	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+	unsigned int i;
+
+	unsigned int j;
+	for (i = 0; i < VIDEO_FILS; i++){
+			for (j = 0; j < VIDEO_COLS; j++){
+					ca temp = {.c = 0, .a = C_BG_LIGHT_GREY  | C_FG_BLACK};
+					p[i][j] = temp;
+			}
+	}
+	
+	for (i = 0; i < VIDEO_COLS; i++) {
+		ca temp = {.c = 'C', .a = C_BG_BLACK | C_FG_WHITE };
+		p[0][i] = temp;
+	}
+	
+	for (i = 2; i < 15; i++){
+			for(j = 50; j < 79; j++){
+				ca temp = {.c = 0, .a = C_BG_BLACK | C_FG_WHITE };
+				p[i][j] = temp;
+			}
+	}
+	
+	for (i = 50; i < 79; i++){
+			ca temp = {.c = 0, .a = C_BG_CYAN | C_FG_BLACK};
+			p[1][i] = temp;
+	}
+	
+	for (i = 2; i < 79; i++){
+			ca temp = {.c = 0, .a = C_BG_BROWN| C_FG_WHITE};
+			p[16][i] = temp;
+	}
+	
+	for (i = 2; i < 79; i++){
+		for (j = 17; j < 24; j++){
+			ca temp = {.c = 0, .a = C_BG_CYAN | C_FG_BLACK };
+				p[j][i] = temp;
+		}
+	}
+	
+	for (i = 0; i < VIDEO_COLS; i++){
+		ca temp = {.c = 0, .a = C_BG_BLACK | C_FG_WHITE };
+		p[24][i] = temp;
+		}
+}
+	
+
 void printear(unsigned int x){
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
 	unsigned int i;

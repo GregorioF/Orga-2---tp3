@@ -19,8 +19,9 @@ extern idt_inicializar
 extern resetear_pic
 extern habilitar_pic
 extern screen_pintar_pantalla
-
-
+extern imprimir_banderitas
+extern mmu_inicializar
+extern imprimir_nombre_del_grupo
 
 ;; Saltear seccion de datos
 jmp start
@@ -87,12 +88,29 @@ BITS 32
     ; pintar pantalla, todos los colores, que bonito!
 
     ; inicializar el manejador de memoria
-
-    ; inicializar el directorio de paginas
-
+	
+	call mmu_inicializar
+    		
+	; inicializar el directorio de paginas
+	
+	mov eax,  0x27000
+    mov cr3, eax
+		  
     ; inicializar memoria de tareas
 
     ; habilitar paginacion
+	
+	mov eax, cr0
+    or eax, 0x80000000
+    mov cr0, eax
+
+	call imprimir_nombre_del_grupo
+	
+	xchg bx,bx
+
+	call imprimir_banderitas
+	
+	xchg bx,bx
 
     ; inicializar tarea idle
 

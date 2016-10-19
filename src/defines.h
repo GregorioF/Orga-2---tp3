@@ -39,6 +39,10 @@
 #define KERNEL                  0x00001200 /* direccion fisica de comienzo del kernel */
 #define VIDEO                   0x000B8000 /* direccion fisica del buffer de video */
 
+#define PAGE_DIRECTORY 			0x27000
+#define PAGE_TABLE_1  			0x28000
+#define PAGE_TABLE_2			0X30000
+
 /* Direcciones virtuales de código, pila y datos */
 /* -------------------------------------------------------------------------- */
 #define TASK_CODE               0x40000000 /* direccion virtual del codigo */

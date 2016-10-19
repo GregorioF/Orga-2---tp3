@@ -29,6 +29,10 @@ void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, un
 
 void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short attr);
 
+void imprimir_banderitas();
+void imprimir_texto(char* c,  int a , int b ,int d);
+void imprimir_nombre_del_grupo();
+
 void screen_pintar_pantalla();
 
 #endif  /* !__SCREEN_H__ */
