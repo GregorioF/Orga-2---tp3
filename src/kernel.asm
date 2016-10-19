@@ -82,8 +82,10 @@ BITS 32
     ; setear la pila
 	mov esp, 0x27000
 	mov ebp, esp
+	
 		
 	call screen_pintar_pantalla
+	xchg bx,bx
 	
     ; pintar pantalla, todos los colores, que bonito!
 
@@ -126,7 +128,7 @@ BITS 32
 
     lidt [IDT_DESC]
    
-	int 13
+	int 0
    
    
     ; configurar controlador de interrupciones
