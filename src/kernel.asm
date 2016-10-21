@@ -22,6 +22,8 @@ extern screen_pintar_pantalla
 extern imprimir_banderitas
 extern mmu_inicializar
 extern imprimir_nombre_del_grupo
+extern mmu_inicializar_dir_tarea
+extern limpiar_pantalla
 
 ;; Saltear seccion de datos
 jmp start
@@ -113,6 +115,16 @@ BITS 32
 	call imprimir_banderitas
 	
 	xchg bx,bx
+
+	call mmu_inicializar_dir_tarea
+
+	mov eax, 0x31000
+	mov cr3, eax
+
+	call limpiar_pantalla
+	call imprimir_nombre_del_grupo
+
+	xchg bx, bx
 
     ; inicializar tarea idle
 
