@@ -66,4 +66,31 @@ void mmu_inicializar_dir_tarea() {
 	}
 		
 }
- 
+
+void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica){
+	int directorio_pagina = cr3 >> 12;
+	int* tpagina = (int*) directorio_pagina;
+	int v1 = virtual >> 22;
+	int tabla_pagina = tpagina[v1];
+
+	int P = (tabla_pagina % 2 == 1);
+//	int rw = ((tabla_pagina >> 1) % 2 == 1); //no se si vale la pena
+//	int user_supervisor = ((tabla_pagina >> 2) % 2 == 1); //true = usuario false = sistema
+	tabla_pagina = tabla_pagina >> 12;
+	tabla_pagina = tabla_pagina << 12;
+
+	
+	if ( !P ) {
+		// PAGE FAULT!!!!
+	}
+	else{
+		int v2 = virtual  << 10;
+		v2 = v2 >> 12;
+	//	int* pagina = (int*) tabla_pagina;
+	//	int pag = pagina[v2];
+		  //FSALTA BANDAAA! PERO ME VOY A CANTO :D
+	}
+
+}
+
+void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3){} 
