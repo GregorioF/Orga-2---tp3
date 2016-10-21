@@ -7,6 +7,7 @@
 
 #include "mmu.h"
 #include "defines.h"
+#include "i386.h"
 
 
 
@@ -68,29 +69,38 @@ void mmu_inicializar_dir_tarea() {
 }
 
 void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica){
-	int directorio_pagina = cr3 >> 12;
-	int* tpagina = (int*) directorio_pagina;
-	int v1 = virtual >> 22;
-	int tabla_pagina = tpagina[v1];
+	int directorio = cr3 >> 12;
+	directorio = directorio << 12;
+	int* pd = (int*) directorio;
+	int pd_index = virtual >> 22;
+	int pde = pd[pd_index];
+	int user = ((pde  >> 2) % 2);
 
-	int P = (tabla_pagina % 2 == 1);
-//	int rw = ((tabla_pagina >> 1) % 2 == 1); //no se si vale la pena
-//	int user_supervisor = ((tabla_pagina >> 2) % 2 == 1); //true = usuario false = sistema
-	tabla_pagina = tabla_pagina >> 12;
-	tabla_pagina = tabla_pagina << 12;
-
-	
-	if ( !P ) {
-		// PAGE FAULT!!!!
+	int pagina = pde >> 12;
+	pagina = pagina << 12;
+	int* pt = (int*) pagina;
+	int pte_index = virtual << 10;
+	pte_index = pte_index  << 22;
+	fisica = fisica >> 12;
+	fisica = fisica << 12;
+	if (user){
+		pt[pte_index] = fisica | 7;
 	}
 	else{
-		int v2 = virtual  << 10;
-		v2 = v2 >> 12;
-	//	int* pagina = (int*) tabla_pagina;
-	//	int pag = pagina[v2];
-		  //FSALTA BANDAAA! PERO ME VOY A CANTO :D
+		pt[pte_index] = fisica | 3;
 	}
 
+	tlbflush();
 }
 
-void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3){} 
+void mmu_unmapear_pagina(unsigned int virtual, unsigned int cr3){
+	int directorio = cr3 >> 12;
+	directorio = directorio << 12;
+	int* pd = (int*) directorio;
+	int pd_index = virtual >> 22;
+	int pde = pd[pd_index];
+	pde = pde >> 1;
+	pde = pde << 1; // ahora la tabla de pagina no esta presente
+
+	tlbflush();
+} 
