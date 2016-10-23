@@ -66,10 +66,9 @@ void mmu_inicializar_dir_tarea() {
 	unsigned char* codigo = (unsigned char*) 0x10000;
 	unsigned char* destino = (unsigned char*) 0x100000;
 
-	for ( i = 0; i < 12000; i++ ){
+	for ( i = 0; i < 2048; i++ ){
 		destino[i] = codigo[i];
 	}
-		
 }
 
 void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica){
@@ -77,21 +76,25 @@ void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisi
 	directorio = directorio << 12;
 	int* pd = (int*) directorio;
 	int pd_index = virtual >> 22;
+	
 	int pde = pd[pd_index];
 	int user = ((pde  >> 2) % 2);
 
 	int pagina = pde >> 12;
 	pagina = pagina << 12;
+	
 	int* pt = (int*) pagina;
-	int pte_index = virtual << 10;
-	pte_index = pte_index  << 22;
+	int pt_index = virtual << 10;
+	pt_index = pt_index  >> 22;
+	
 	fisica = fisica >> 12;
 	fisica = fisica << 12;
-	if (user){
-		pt[pte_index] = fisica | 7;
+	
+	if (user == 1){
+		pt[pt_index] = fisica | 7;
 	}
 	else{
-		pt[pte_index] = fisica | 3;
+		pt[pt_index] = fisica | 3;
 	}
 
 	tlbflush();
