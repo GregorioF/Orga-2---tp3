@@ -14,6 +14,7 @@ BITS 32
 extern fin_intr_pic1
 extern printear
 extern limpiar_pantalla
+extern print_numerito
 
 
 ;;
@@ -74,14 +75,56 @@ ISR 19
 ;;
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
+global _isr32
+_isr32:
+    pushad
+    call fin_intr_pic1
+    call proximo_reloj
+    popad
+    iret    
+
 
 ;;
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
+global _isr33
+_isr33:
+    
+    pushad
+    xor eax, eax
+    call fin_intr_pic1
+    xor eax, eax
+    in al, 0x60
+    push eax
+    call print_numerito
 
+    popad
+    iret
+
+
+    
 ;;
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
+
+global _isr50
+_isr50:
+    pushad
+    call fin_intr_pic1
+    mov eax, 0x42
+    popad
+    iret
+
+
+global _isr66
+_isr66:
+    pushad
+    call fin_intr_pic1
+    mov eax,0x42
+    popad
+    iret
+
+
 
 ;; Funciones Auxiliares
 ;; -------------------------------------------------------------------------- ;;
@@ -89,7 +132,7 @@ proximo_reloj:
     pushad
 
     inc DWORD [reloj_numero]
-    mov ebx, [reloj]
+    mov ebx, [reloj_numero]
     cmp ebx, 0x4
     jl .ok
         mov DWORD [reloj_numero], 0x0

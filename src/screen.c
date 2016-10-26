@@ -13,6 +13,22 @@ static const char* a []= {
 };
 
 
+char tabla_traduccion (int eax) {
+	char uno = '1';
+	if (eax >= 0x2  && eax < 0xb ){
+		return uno + eax-2;
+	}
+	if (eax == 0xb) return '0';
+	return 0;
+}
+
+void print_numerito(int eax){
+	char numerito = tabla_traduccion(eax);
+	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+	ca temp = {.c = numerito, .a = C_BG_RED  | C_FG_WHITE};
+	p[0][79] = temp;
+}
+
 void imprimir_texto(char* palabra, int n, int currFila, int currCol ){
 	
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;

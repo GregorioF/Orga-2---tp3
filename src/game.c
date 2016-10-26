@@ -17,3 +17,5 @@ unsigned int game_canonear(unsigned int dir_misil_fisica, unsigned int dir_buffe
 unsigned int game_navegar(unsigned int dir_primera_pag_fisica, unsigned int dir_segunda_pag_fisica) {
     return TRUE;
 }
+
+

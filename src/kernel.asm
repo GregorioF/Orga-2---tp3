@@ -135,15 +135,17 @@ BITS 32
     ; inicializar el scheduler
 
     ; inicializar la IDT
-	
+
 	call idt_inicializar
 
     lidt [IDT_DESC]
-   
-	int 0
-   
-   
+     
     ; configurar controlador de interrupciones
+
+    call resetear_pic
+    call habilitar_pic
+
+    sti
 
     ; cargar la tarea inicial
 
