@@ -97,6 +97,7 @@ _isr33:
     in al, 0x60
     push eax
     call print_numerito
+    add esp, 4
 
     popad
     iret
