@@ -23,10 +23,14 @@ char tabla_traduccion (int eax) {
 }
 
 void print_numerito(int eax){
-	char numerito = tabla_traduccion(eax);
-	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
-	ca temp = {.c = numerito, .a = C_BG_RED  | C_FG_WHITE};
-	p[0][79] = temp;
+	if (eax == 0x32) imprimir_banderitas();
+	else{ 
+
+		char numerito = tabla_traduccion(eax);
+		ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+		ca temp = {.c = numerito, .a = C_BG_RED  | C_FG_WHITE};
+		p[0][79] = temp;
+		}
 }
 
 void imprimir_texto(char* palabra, int n, int currFila, int currCol ){
@@ -52,6 +56,8 @@ void imprimir_banderitas(){
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
 	unsigned int i;
 
+
+	//IMPRIMIMOS FONDO
 	unsigned int j;
 	for (i = 0; i < VIDEO_FILS; i++){
 			for (j = 0; j < VIDEO_COLS; j++){
@@ -59,40 +65,107 @@ void imprimir_banderitas(){
 					p[i][j] = temp;
 			}
 	}
-	
+
+
+	//IMPRIMIMOS EN LA PRIMER LINEA EL NOMBRE DEL GRUPO
+	char* nombreGrupo = "El Arquitecto";
+	int r = 0;
 	for (i = 0; i < VIDEO_COLS; i++) {
-		ca temp = {.c = 'C', .a = C_BG_BLACK | C_FG_WHITE };
-		p[0][i] = temp;
+		if( r < 13){ 
+			ca temp = {.c = nombreGrupo[r], .a = C_BG_BLACK | C_FG_WHITE };
+			r++;
+			p[0][i] = temp;
+		}else{ 
+			ca temp = {.c = ' ', .a = C_BG_BLACK | C_FG_WHITE };
+			p[0][i] = temp;
+		}
 	}
 	
+
+	//ARMAMOS SECCION DE ULTIMO ERROR 
 	for (i = 2; i < 15; i++){
 			for(j = 50; j < 79; j++){
 				ca temp = {.c = 0, .a = C_BG_BLACK | C_FG_WHITE };
 				p[i][j] = temp;
 			}
 	}
-	
+	//PONEMOS FRAJNA AZUL SOBRE LA SECCION DE ERROR
 	for (i = 50; i < 79; i++){
 			ca temp = {.c = 0, .a = C_BG_CYAN | C_FG_BLACK};
 			p[1][i] = temp;
 	}
 	
+
+	//PONEMOS FRANJA NARANJA SOBRE LA SECCION  DE ESTADOS
 	for (i = 2; i < 79; i++){
 			ca temp = {.c = 0, .a = C_BG_BROWN| C_FG_WHITE};
 			p[16][i] = temp;
 	}
 	
+	//ARMAMOS LA SECCION DE ESTADOS
 	for (i = 2; i < 79; i++){
 		for (j = 17; j < 24; j++){
 			ca temp = {.c = 0, .a = C_BG_CYAN | C_FG_BLACK };
 				p[j][i] = temp;
 		}
 	}
-	
+	//PONEMOS LA ULTIMA LINEA EN NEGRO 
 	for (i = 0; i < VIDEO_COLS; i++){
-		ca temp = {.c = 0, .a = C_BG_BLACK | C_FG_WHITE };
-		p[24][i] = temp;
+			ca temp = {.c = 0, .a = C_BG_BLACK | C_FG_WHITE };
+			p[24][i] = temp;
+	}
+	//BORDE IZQUIERDO DE SECCION ESTADOS
+	for (i = 16; i < 24; i++){
+		ca temp = {.c = (i-15)+'0', .a = C_BG_LIGHT_GREY | C_FG_BLACK };
+		p[i][1] = temp;
+		ca temp2 = {.c = 0, .a = C_BG_BLACK | C_FG_WHITE  };
+		p[i][0]= temp2;
+		p[i][79]= temp2;
+	}
+
+	for (i = 0; i < 10 ; i ++){
+		for (j = 0; j < 5; j++){
+			ca temp = {.c = 0, .a = C_BG_MAGENTA | C_FG_BLACK };
+			p[j+3][i+2] = temp;
 		}
+	}
+	for (i = 0; i < 10 ; i ++){
+		for (j = 0; j < 5; j++){
+			ca temp = {.c = 0, .a = C_BG_MAGENTA | C_FG_BLACK };
+			p[j+3][i+14] = temp;
+		}
+	}for (i = 0; i < 10 ; i ++){
+		for (j = 0; j < 5; j++){
+			ca temp = {.c = 0, .a = C_BG_MAGENTA | C_FG_BLACK };
+			p[j+3][i+26] = temp;
+		}
+	}for (i = 0; i < 10 ; i ++){
+		for (j = 0; j < 5; j++){
+			ca temp = {.c = 0, .a = C_BG_MAGENTA | C_FG_BLACK };
+			p[j+3][i+38] = temp;
+		}
+	}for (i = 0; i < 10 ; i ++){
+		for (j = 0; j < 5; j++){
+			ca temp = {.c = 0, .a = C_BG_MAGENTA | C_FG_BLACK };
+			p[j+10][i+2] = temp;
+		}
+	}for (i = 0; i < 10 ; i ++){
+		for (j = 0; j < 5; j++){
+			ca temp = {.c = 0, .a = C_BG_MAGENTA | C_FG_BLACK };
+			p[j+10][i+14] = temp;
+		}
+	}for (i = 0; i < 10 ; i ++){
+		for (j = 0; j < 5; j++){
+			ca temp = {.c = 0, .a = C_BG_MAGENTA | C_FG_BLACK };
+			p[j+10][i+26] = temp;
+		}
+	}for (i = 0; i < 10 ; i ++){
+		for (j = 0; j < 5; j++){
+			ca temp = {.c = 0, .a = C_BG_MAGENTA | C_FG_BLACK };
+			p[j+10][i+38] = temp;
+		}
+	}
+
 }
 	
 
