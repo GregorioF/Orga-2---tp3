@@ -148,7 +148,7 @@ BITS 32
     mov ax, 23 << 3
 	xchg bx, bx
 	ltr ax
-	
+
 	jmp 24 << 3:0
 	
     ; cargar la tarea inicial

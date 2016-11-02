@@ -100,12 +100,12 @@ void tss_inicializar() {
 	tarea_idle.esp0 = 0x2A000;
 	tarea_idle.esp = 0x2A000;
 	tarea_idle.ebp = 0x2A000;
-	tarea_idle.eflags = 0x002;
+	tarea_idle.eflags = 0x202;
 	tarea_idle.cs = GDT_COD_L0 << 3;
 	tarea_idle.ds = GDT_DAT_L0 << 3;
 	tarea_idle.ss = GDT_DAT_L0 << 3;
 	tarea_idle.cr3 = PAGE_DIRECTORY >> 12;
 	tarea_idle.cr3 = tarea_idle.cr3 << 12;
-	
+
 }
 
