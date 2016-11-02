@@ -32,6 +32,8 @@ void mmu_inicializar() {
 	for (  i = 0 ; i < 896; i++ ) page_table_2[i] = (i+1024*1) << 12 | 3; 
 	for (  i = 896 ; i < 1024; i++ ) page_table_2[i] = 0; // el resto de la tabla de pagina 2 en 0
 	
+	page_table_1[20] =  40000003;
+	
 }
 
 void mmu_inicializar_dir_tarea() {

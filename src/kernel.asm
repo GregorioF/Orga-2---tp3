@@ -24,6 +24,7 @@ extern mmu_inicializar
 extern imprimir_nombre_del_grupo
 extern mmu_inicializar_dir_tarea
 extern limpiar_pantalla
+extern tss_inicializar
 
 ;; Saltear seccion de datos
 jmp start
@@ -87,7 +88,6 @@ BITS 32
 	
 		
 	call screen_pintar_pantalla
-	xchg bx,bx
 	
     ; pintar pantalla, todos los colores, que bonito!
 
@@ -109,12 +109,9 @@ BITS 32
     mov cr0, eax
 
 	call imprimir_nombre_del_grupo
-	
-	xchg bx,bx
 
 	call imprimir_banderitas
 	
-	xchg bx,bx
 
 	call mmu_inicializar_dir_tarea
 
@@ -124,7 +121,6 @@ BITS 32
 	call limpiar_pantalla
 	call imprimir_nombre_del_grupo
 
-	xchg bx, bx
 
     ; inicializar tarea idle
 
@@ -146,7 +142,15 @@ BITS 32
     call habilitar_pic
 
     sti
-
+    
+    call tss_inicializar	
+    
+    mov ax, 23 << 3
+	xchg bx, bx
+	ltr ax
+	
+	jmp 24 << 3:0
+	
     ; cargar la tarea inicial
 
     ; saltar a la primer tarea

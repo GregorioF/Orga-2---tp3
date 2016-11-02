@@ -33,6 +33,10 @@
 #define GDT_DAT_L3 21 
 #define GDT_VID_L0 22
 
+#define TAREA_INICIAL 23
+#define TAREA_IDLE 24
+
+
 /* Direcciones de memoria */
 /* -------------------------------------------------------------------------- */
 #define BOOTSECTOR              0x00001000 /* direccion fisica de comienzo del bootsector (copiado) */
