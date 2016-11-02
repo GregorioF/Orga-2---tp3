@@ -145,6 +145,7 @@ BITS 32
     
     call tss_inicializar	
     
+    
     mov ax, 23 << 3
 	xchg bx, bx
 	ltr ax

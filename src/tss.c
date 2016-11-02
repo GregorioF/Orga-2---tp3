@@ -107,5 +107,7 @@ void tss_inicializar() {
 	tarea_idle.cr3 = PAGE_DIRECTORY >> 12;
 	tarea_idle.cr3 = tarea_idle.cr3 << 12;
 
+  
+
 }
 
