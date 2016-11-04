@@ -113,21 +113,15 @@ BITS 32
 	call imprimir_banderitas
 	
 
-	call mmu_inicializar_dir_tarea
-
-	mov eax, 0x31000
-	mov cr3, eax
 
 	call limpiar_pantalla
 	call imprimir_nombre_del_grupo
 
 
-    ; inicializar tarea idle
+    ; inicializar tarea idle     ; inicializar todas las tss    ; inicializar entradas de la gdt de las tsss
+	
 
-    ; inicializar todas las tsss
-
-    ; inicializar entradas de la gdt de las tsss
-
+    
     ; inicializar el scheduler
 
     ; inicializar la IDT
@@ -142,20 +136,20 @@ BITS 32
     call habilitar_pic
 
     sti
-    
-    call tss_inicializar	
-    
-    
+   
+    xchg bx, bx
+    call tss_inicializar
+    xchg bx, bx
+    ; cargar la tarea inicial    ; saltar a la primer tarea
+	        
     mov ax, 23 << 3
-	xchg bx, bx
+
 	ltr ax
 
-	jmp 24 << 3:0
+	jmp 24 << 3 : 0
 	
-    ; cargar la tarea inicial
-
-    ; saltar a la primer tarea
-
+	jmp 28 << 3 : 0
+	
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF
     mov ebx, 0xFFFF

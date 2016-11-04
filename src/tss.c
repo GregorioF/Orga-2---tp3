@@ -6,7 +6,8 @@
 */
 
 #include "tss.h"
-#include "gdt.h" 
+#include "gdt.h"
+#include "mmu.h" 
 
 tss tarea_inicial;
 tss tarea_idle;
@@ -14,7 +15,7 @@ tss tarea_idle;
 tss tss_navios[CANT_TAREAS];
 tss tss_banderas[CANT_TAREAS];
 
-
+int dir_tareas []  = {0x31000, 0x32000, 0x33000, 0x34000, 0x35000, 0x36000, 0x37000, 0x38000};
 void actualizar_gdt(){
 	int i = 0;
 	int j = 0;
@@ -107,7 +108,36 @@ void tss_inicializar() {
 	tarea_idle.cr3 = PAGE_DIRECTORY >> 12;
 	tarea_idle.cr3 = tarea_idle.cr3 << 12;
 
-  
+   
+    int i = 0;
+    for (i = 0; i < 8 ; i ++){
+        tss_navios[i].eip = 0x40000000;
+       // tss_navios[i].esp3 = 0x40001C00;  BRIANGATUBELA
+        tss_navios[i].esp = 0x40001C00;
+        tss_navios[i].ebp = 0x40001C00;
+        tss_navios[i].eflags = 0x202;  
+        tss_navios[i].esp0 = nextPage();
+        tss_navios[i].cs = GDT_COD_L3 << 3;
+        tss_navios[i].ds = GDT_DAT_L3 << 3;
+        tss_navios[i].ss = GDT_DAT_L3 << 3;
+        tss_navios[i].cr3 = dir_tareas[i];
+        mmu_inicializar_dir_tarea(i, dir_tareas[i]) ;
+		
+		tss_banderas[i].eip = *(char*)0x40001FFF;
+        tss_banderas[i].esp = 0x40001C00;
+        tss_banderas[i].ebp = 0x40001C00;
+        tss_banderas[i].eflags = 0x202;  
+        tss_banderas[i].esp0 = nextPage();
+        tss_banderas[i].cs = GDT_COD_L3 << 3;
+        tss_banderas[i].ds = GDT_DAT_L3 << 3;
+        tss_banderas[i].ss = GDT_DAT_L3 << 3;
+        tss_banderas[i].cr3 = dir_tareas[i];
+    
+    }
+    
+    
+	
+	
 
 }
 
