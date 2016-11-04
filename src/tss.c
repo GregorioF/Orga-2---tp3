@@ -93,10 +93,17 @@ void actualizar_gdt(){
 }
 
 
+void error(){
+	int a = 5;
+	int b = 0;
+	int c = a/b;
+	 a = c;
+}
 
 void tss_inicializar() {
 	actualizar_gdt();
-	
+
+
 	tarea_idle.eip = 0x20000;
 	tarea_idle.esp0 = 0x2A000;
 	tarea_idle.esp = 0x2A000;
@@ -108,7 +115,8 @@ void tss_inicializar() {
 	tarea_idle.cr3 = PAGE_DIRECTORY >> 12;
 	tarea_idle.cr3 = tarea_idle.cr3 << 12;
 
-   
+
+   	int dosk = 1024*2;
     int i = 0;
     for (i = 0; i < 8 ; i ++){
         tss_navios[i].eip = 0x40000000;
@@ -119,12 +127,15 @@ void tss_inicializar() {
         tss_navios[i].esp0 = nextPage();
         tss_navios[i].cs = GDT_COD_L3 << 3;
         tss_navios[i].ds = GDT_DAT_L3 << 3;
+        
         tss_navios[i].ss = GDT_DAT_L3 << 3;
         tss_navios[i].cr3 = dir_tareas[i];
-        mmu_inicializar_dir_tarea(i, dir_tareas[i]) ;
+        
+		mmu_inicializar_dir_tarea(i, dir_tareas[i]) ;
+				
+		tss_banderas[i].eip = *((unsigned int*)0x101FFC + dosk*i); // MEGA BRIAN GATUBELA
 		
-		tss_banderas[i].eip = *(char*)0x40001FFF;
-        tss_banderas[i].esp = 0x40001C00;
+		tss_banderas[i].esp = 0x40001C00;
         tss_banderas[i].ebp = 0x40001C00;
         tss_banderas[i].eflags = 0x202;  
         tss_banderas[i].esp0 = nextPage();
@@ -132,12 +143,12 @@ void tss_inicializar() {
         tss_banderas[i].ds = GDT_DAT_L3 << 3;
         tss_banderas[i].ss = GDT_DAT_L3 << 3;
         tss_banderas[i].cr3 = dir_tareas[i];
-    
+    	
+        
     }
     
     
 	
 	
-
 }
 

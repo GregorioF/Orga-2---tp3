@@ -136,7 +136,8 @@ BITS 32
     call habilitar_pic
 
     sti
-   
+    
+ 
     xchg bx, bx
     call tss_inicializar
     xchg bx, bx

@@ -42,6 +42,7 @@ void mmu_inicializar() {
 }
 
 void mmu_inicializar_dir_tarea( int tarea, int dir) {
+
 	
 	int* page_task_directory = (int*) dir;
 
