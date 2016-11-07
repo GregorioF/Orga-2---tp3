@@ -138,18 +138,16 @@ BITS 32
     sti
     
  
-    xchg bx, bx
     call tss_inicializar
-    xchg bx, bx
     ; cargar la tarea inicial    ; saltar a la primer tarea
 	        
     mov ax, 23 << 3
 
 	ltr ax
-
-	jmp 24 << 3 : 0
 	
-	jmp 28 << 3 : 0
+	xchg bx, bx
+    
+	jmp 28<<3 : 0 
 	
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF

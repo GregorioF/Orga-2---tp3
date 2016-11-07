@@ -135,8 +135,8 @@ void tss_inicializar() {
 				
 		tss_banderas[i].eip = *((unsigned int*)0x101FFC + dosk*i); // MEGA BRIAN GATUBELA
 		
-		tss_banderas[i].esp = 0x40001C00;
-        tss_banderas[i].ebp = 0x40001C00;
+		tss_banderas[i].esp = 0x40001FFC;
+        tss_banderas[i].ebp = 0x40001FFC;
         tss_banderas[i].eflags = 0x202;  
         tss_banderas[i].esp0 = nextPage();
         tss_banderas[i].cs = GDT_COD_L3 << 3;

@@ -1,0 +1,4 @@
+\select@language {spanish}
+\contentsline {section}{\numberline {1}Ejercicio 1}{2}{section.1}
+\contentsline {subsection}{\numberline {1.1}Inicializar la GDT}{2}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Pasar a Modo Protegido}{2}{subsection.1.2}
