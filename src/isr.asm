@@ -32,6 +32,7 @@ _isr%1:
     mov edi, %1
     push edi
     call printear
+    add esp, 4
     mov eax, 0xFFF2
     mov ebx, 0xFFF2
     mov ecx, 0xFFF2
