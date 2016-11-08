@@ -145,3 +145,22 @@ proximo_reloj:
 
     popad
     ret
+    
+sched:
+    pushad
+
+    inc DWORD [reloj_numero]
+    mov ebx, [reloj_numero]
+    cmp ebx, 0x3
+    jne .ok
+        mov DWORD [reloj_numero], 0x0
+        ;call banderas
+		jmp .fin
+    .ok:
+		;call sched_proximo_indice
+        add ax, 25
+       ; jmp ax << 3 : 0
+        
+    .fin: 
+		popad
+		ret

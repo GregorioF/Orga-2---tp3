@@ -124,12 +124,32 @@ void tss_inicializar() {
         tss_navios[i].esp = 0x40001C00;
         tss_navios[i].ebp = 0x40001C00;
         tss_navios[i].eflags = 0x202;  
+       
         tss_navios[i].esp0 = nextPage();
+        tss_navios[i].ss0 = GDT_DAT_L0 << 3;
+       
+
         tss_navios[i].cs = GDT_COD_L3 << 3;
         tss_navios[i].ds = GDT_DAT_L3 << 3;
-        
+        tss_navios[i].fs = 22 << 3; //segmento de video 
         tss_navios[i].ss = GDT_DAT_L3 << 3;
+       
         tss_navios[i].cr3 = dir_tareas[i];
+
+
+        //cosas que no necesitamos
+        tss_navios[i].iomap = 0;
+        tss_navios[i].unused10 = 0;
+        tss_navios[i].ldt = 0;
+        tss_navios[i].unused9 = 0;
+        tss_navios[i].gs = GDT_DAT_L3 << 3;
+        tss_navios[i].unused8=0;
+        tss_navios[i].unused7=0;
+        tss_navios[i].unused6=0;
+        tss_navios[i].unused5 = 0;
+        tss_navios[i].unused4=0;
+        tss_navios[i].es = GDT_DAT_L3 << 3;
+        
         
 		mmu_inicializar_dir_tarea(i, dir_tareas[i]) ;
 				
@@ -139,6 +159,7 @@ void tss_inicializar() {
         tss_banderas[i].ebp = 0x40001FFC;
         tss_banderas[i].eflags = 0x202;  
         tss_banderas[i].esp0 = nextPage();
+        tss_navios[i].ss0 = GDT_DAT_L0 << 3;
         tss_banderas[i].cs = GDT_COD_L3 << 3;
         tss_banderas[i].ds = GDT_DAT_L3 << 3;
         tss_banderas[i].ss = GDT_DAT_L3 << 3;
