@@ -66,17 +66,17 @@ void mmu_inicializar_dir_tarea( int tarea, int dir) {
 	for (  i = 896 ; i < 1024; i++ ) page_t2[i] = 0; // el resto de la tabla de pagina 2 en 0
 	
 
-	int dosk = 1024*2;
+	int dosk = 0x2000;
 
 
 	for (  i = 0 ; i < 1024; i++ ) page_t3[i] = 0; // pongo toda la tabla 3 en cero
-	page_t3[0] = (0x100000 + dosk*tarea) | 7;
-	page_t3[1] = (0x101000 + dosk*tarea) | 7;
+	page_t3[0] = (0x100000 + dosk*tarea ) | 7;
+	page_t3[1] = (0x101000 + dosk*tarea ) | 7;
 	page_t3[2] = 0x000000 | 7;
 
 	
 	unsigned char* codigo = (unsigned char*) 0x10000 +  dosk*tarea;  // es el codigo d la tarea
-	unsigned char* destino = (unsigned char*) 0x100000 +  + dosk*tarea;
+	unsigned char* destino = (unsigned char*) 0x100000  + dosk*tarea;
 
 	for ( i = 0; i < 2048; i++ ){
 		destino[i] = codigo[i];

@@ -131,24 +131,25 @@ BITS 32
     lidt [IDT_DESC]
      
     ; configurar controlador de interrupciones
-
+	
+    call tss_inicializar
+    
     call resetear_pic
     call habilitar_pic
 
     sti
     
- 
-    call tss_inicializar
-    ; cargar la tarea inicial    ; saltar a la primer tarea
-	        
-    mov ax, 23 << 3
+ ; cargar la tarea inicial    ; saltar a la primer tarea
+
+    	        
+    mov ax, 23 << 3 
 
 	ltr ax
 	
 	xchg bx, bx
     
-	jmp 28<<3 : 0 
-	
+	jmp 24<<3 : 0x0 
+	 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF
     mov ebx, 0xFFFF

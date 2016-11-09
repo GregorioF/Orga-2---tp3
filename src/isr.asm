@@ -15,7 +15,9 @@ extern fin_intr_pic1
 extern printear
 extern limpiar_pantalla
 extern print_numerito
-
+extern sched_proximo_indice
+extern inhabilitar_tarea
+extern sched_indice_actual
 
 ;;
 ;; Definición de MACROS
@@ -25,19 +27,30 @@ extern print_numerito
 global _isr%1
 
 _isr%1:
-.loopear:
+
+	pushad
+	call sched_indice_actual
+	push ax
+	xchg bx, bx
+	call inhabilitar_tarea
+	pop ax	
+	jmp 24<<3:0
+	
+	popad
+	iret
+	
     ; To Infinity And Beyond!!
     
-    call limpiar_pantalla
-    mov edi, %1
-    push edi
-    call printear
-    add esp, 4
-    mov eax, 0xFFF2
-    mov ebx, 0xFFF2
-    mov ecx, 0xFFF2
-    mov edx, 0xFFF2
-    jmp $
+   ; call limpiar_pantalla
+   ; mov edi, %1
+   ; push edi
+   ; call printear
+   ; add esp, 4
+   ; mov eax, 0xFFF2
+   ; mov ebx, 0xFFF2
+   ; mov ecx, 0xFFF2
+   ; mov edx, 0xFFF2
+   ; jmp $
 %endmacro
 
 ;;
@@ -46,7 +59,8 @@ _isr%1:
 ; Scheduler
 reloj_numero:           dd 0x00000000
 reloj:                  db '|/-\'
-
+offset:  				dd 0x00000000
+selector:				dw 0x00000000
 
 ;;
 ;; Rutina de atención de las EXCEPCIONES
@@ -80,7 +94,8 @@ global _isr32
 _isr32:
     pushad
     call fin_intr_pic1
-    call proximo_reloj
+    xchg bx, bx
+    call sched
     popad
     iret    
 
@@ -148,7 +163,7 @@ proximo_reloj:
     
 sched:
     pushad
-
+    
     inc DWORD [reloj_numero]
     mov ebx, [reloj_numero]
     cmp ebx, 0x3
@@ -157,10 +172,12 @@ sched:
         ;call banderas
 		jmp .fin
     .ok:
-		;call sched_proximo_indice
+		call sched_proximo_indice
         add ax, 25
-       ; jmp ax << 3 : 0
-        
+        shl ax, 3
+        mov [selector], ax
+        jmp [offset]
+                
     .fin: 
 		popad
 		ret

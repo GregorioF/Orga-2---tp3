@@ -8,15 +8,27 @@
 #include "sched.h"
 int tareas [8]={1,1,1,1,1,1,1,1};
 int banderas [8]={1,1,1,1,1,1,1,1};
-int current = 0;
+int current = -1;
 
 void sched_inicializar() {
 }
 
-
-unsigned short sched_proximo_indice() {
-	current +=1;
-	while(tareas[current] == 0) current +=1;
-	return current;
+void inhabilitar_tarea(unsigned short n){
+		n = n% 8;
+		tareas[n]=0;
+		banderas[n]=0;
+}
+short sched_proximo_indice() {
+	current +=1 ;
+	int i = 0;
+	while(tareas[current%8] == 0 && i < 20){
+		current +=1;
+		i = i+1;
+	}
+	if(i == 20) return -1;
+	return current %8;
 }
 
+unsigned short sched_indice_actual(){
+	return current %8;
+}

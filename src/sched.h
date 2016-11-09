@@ -10,7 +10,9 @@
 
 
 void sched_inicializar();
-unsigned short sched_proximo_indice();
+short sched_proximo_indice();
+void inhabilitar_tarea(unsigned short n);
+unsigned short sched_indice_actual();
 
 
 #endif	/* !__SCHED_H__ */

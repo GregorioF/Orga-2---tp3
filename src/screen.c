@@ -9,7 +9,8 @@
 #include "colors.h"
 
 static const char* a []= {
-"ERROR 0: DIVIDE ERROR", "ERROR 1: RESERVED", "ERROR 2: NMI Interrupt", "ERROR 3: Breakpoint", "ERROR 4: Overflow", "ERROR 5: BOUND Range Exceeded", "ERROR 6: Invalid Opcode (Undefined Opcode)", "ERROR 7: Device Not Available (No Match Coprocessor)", "ERROR 8: Double Fault", "ERROR 9: Coprocessor Segment Overrun (reserved)", "ERROR 10: Invalid TSS", "ERROR 11: Segment Not Present", "ERROR 12: Stack-Segment Fault", "ERROR 13: General Protection", "ERROR 14: Page Fault", "ERROR 15: (Intel reserved. Do not use.)", "ERROR 16: x87 FPU Floating-Point Error (Math Fault)", "ERROR 17: Alignment Check", "ERROR 18: Machine Check", "ERROR 19: SIMD Floating-Point Exception"
+"ERROR 0: DIVIDE ERROR", "ERROR 1: RESERVED", "ERROR 2: NMI Interrupt", "ERROR 3: Breakpoint", "ERROR 4: Overflow", "ERROR 5: BOUND Range Exceeded", "ERROR 6: Invalid Opcode (Undefined Opcode)", 
+"ERROR 7: Device Not Available (No Match Coprocessor)", "ERROR 8: Double Fault", "ERROR 9: Coprocessor Segment Overrun (reserved)", "ERROR 10: Invalid TSS", "ERROR 11: Segment Not Present", "ERROR 12: Stack-Segment Fault", "ERROR 13: General Protection", "ERROR 14: Page Fault", "ERROR 15: (Intel reserved. Do not use.)", "ERROR 16: x87 FPU Floating-Point Error (Math Fault)", "ERROR 17: Alignment Check", "ERROR 18: Machine Check", "ERROR 19: SIMD Floating-Point Exception"
 };
 
 
