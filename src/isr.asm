@@ -18,6 +18,7 @@ extern print_numerito
 extern sched_proximo_indice
 extern inhabilitar_tarea
 extern sched_indice_actual
+extern sched_proxima_bandera
 
 ;;
 ;; Definición de MACROS
@@ -31,7 +32,8 @@ _isr%1:
 	pushad
 	call sched_indice_actual
 	push ax
-	xchg bx, bx
+	
+	dec byte [habilitadas]
 	call inhabilitar_tarea
 	pop ax	
 	jmp 24<<3:0
@@ -61,6 +63,7 @@ reloj_numero:           dd 0x00000000
 reloj:                  db '|/-\'
 offset:  				dd 0x00000000
 selector:				dw 0x00000000
+habilitadas:			dw 0x00000008
 
 ;;
 ;; Rutina de atención de las EXCEPCIONES
@@ -93,8 +96,8 @@ ISR 19
 global _isr32
 _isr32:
     pushad
+    
     call fin_intr_pic1
-    xchg bx, bx
     call sched
     popad
     iret    
@@ -137,7 +140,7 @@ global _isr66
 _isr66:
     pushad
     call fin_intr_pic1
-    mov eax,0x42
+    jmp 24<<3:0
     popad
     iret
 
@@ -167,16 +170,36 @@ sched:
     inc DWORD [reloj_numero]
     mov ebx, [reloj_numero]
     cmp ebx, 0x3
-    jne .ok
-        mov DWORD [reloj_numero], 0x0
-        ;call banderas
-		jmp .fin
+	jl .ok
+	;	mov ecx, [habilitadas]
+	;	add ecx, ebx
+	;	cmp ecx, ebx
+	;	jge .sigo
+		
+    ;   mov DWORD [reloj_numero], 0x0
+    ;   call sched_proxima_bandera
+    ;  add ax, 33
+    ;    shl ax, 3
+    ;    xchg bx, bx
+    ;    mov [selector],ax
+    ;    xchg bx, bx
+    ;    jmp far [offset]
+       
+	;	jmp .fin
+	
+	;.sigo:
+	;	mov dword[reloj_numero], 0
     .ok:
+		call sched_indice_actual
+		mov cx, ax
 		call sched_proximo_indice
+		;xchg bx, bx
+		cmp cx, ax
+		je .fin
         add ax, 25
         shl ax, 3
         mov [selector], ax
-        jmp [offset]
+        jmp far [offset]
                 
     .fin: 
 		popad

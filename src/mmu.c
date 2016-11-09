@@ -57,12 +57,12 @@ void mmu_inicializar_dir_tarea( int tarea, int dir) {
 	int i = 0;
 	for (  i = 0 ; i < 1024; i++ ) page_task_directory[i] = 0; // borro todo el directorio de pagina de la tarea
 
-	page_task_directory[0]  = page_t1_dir | 0x7;
-	page_task_directory[1] = page_t2_dir | 0x7; 
+	page_task_directory[0]  = page_t1_dir | 0x3;
+	page_task_directory[1] = page_t2_dir | 0x3; 
 	page_task_directory[256] = page_t3_dir | 0x7;
 
-	for (  i = 0 ; i < 1024; i++ ) page_t1[i] = (i+1024*0) << 12 | 7;
-	for (  i = 0 ; i < 896; i++ ) page_t2[i] = (i+1024*1) << 12 | 7; 
+	for (  i = 0 ; i < 1024; i++ ) page_t1[i] = (i+1024*0) << 12 | 3;
+	for (  i = 0 ; i < 896; i++ ) page_t2[i] = (i+1024*1) << 12 | 3; 
 	for (  i = 896 ; i < 1024; i++ ) page_t2[i] = 0; // el resto de la tabla de pagina 2 en 0
 	
 

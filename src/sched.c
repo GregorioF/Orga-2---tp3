@@ -9,6 +9,7 @@
 int tareas [8]={1,1,1,1,1,1,1,1};
 int banderas [8]={1,1,1,1,1,1,1,1};
 int current = -1;
+int currentBanderas = 0;
 
 void sched_inicializar() {
 }
@@ -31,4 +32,13 @@ short sched_proximo_indice() {
 
 unsigned short sched_indice_actual(){
 	return current %8;
+}
+unsigned short sched_proxima_bandera(){
+	currentBanderas +=1 ;
+	int i = 0;
+	while(tareas[currentBanderas%8] == 0 && i < 20){
+		currentBanderas +=1;
+		i = i+1;
+	}
+	return currentBanderas%8;
 }

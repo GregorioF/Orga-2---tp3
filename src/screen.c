@@ -242,6 +242,7 @@ void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short at
 
 
 void screen_pintar_pantalla(){
+	/*
 	char c1 = 0;
 	char c3 = 42;
 	char c4 = 0xff;
@@ -272,6 +273,7 @@ void screen_pintar_pantalla(){
 		p = p+80;
 		i++;
 	}
+	*/
 	
 }
 

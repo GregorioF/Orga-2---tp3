@@ -64,6 +64,8 @@ start:
 	mov eax,cr0 
 	or eax,1 
 	mov cr0,eax
+
+	
 	
 	; pasar a modo protegido
 	jmp 18<<3:mp
@@ -86,45 +88,43 @@ BITS 32
 	mov esp, 0x27000
 	mov ebp, esp
 	
-		
+	
 	call screen_pintar_pantalla
 	
-    ; pintar pantalla, todos los colores, que bonito!
+   ;  pintar pantalla, todos los colores, que bonito!
 
     ; inicializar el manejador de memoria
-	
+
 	call mmu_inicializar
     		
 	; inicializar el directorio de paginas
 	
 	mov eax,  0x27000
     mov cr3, eax
-		  
-    ; inicializar memoria de tareas
-
+    ; inicializar memoria de tareas	 
     ; habilitar paginacion
 	
 	mov eax, cr0
     or eax, 0x80000000
     mov cr0, eax
+    
 
 	call imprimir_nombre_del_grupo
-
+	
 	call imprimir_banderitas
 	
-
-
 	call limpiar_pantalla
 	call imprimir_nombre_del_grupo
 
 
     ; inicializar tarea idle     ; inicializar todas las tss    ; inicializar entradas de la gdt de las tsss
-	
-
-    
+	call tss_inicializar
+   
     ; inicializar el scheduler
 
     ; inicializar la IDT
+    
+    
 
 	call idt_inicializar
 
@@ -132,23 +132,23 @@ BITS 32
      
     ; configurar controlador de interrupciones
 	
-    call tss_inicializar
     
     call resetear_pic
     call habilitar_pic
-
-    sti
+	
+	sti
+    
     
  ; cargar la tarea inicial    ; saltar a la primer tarea
-
     	        
     mov ax, 23 << 3 
 
 	ltr ax
 	
-	xchg bx, bx
-    
-	jmp 24<<3 : 0x0 
+	jmp 24<< 3:0
+	
+	
+	
 	 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF
