@@ -31,12 +31,13 @@ short sched_proximo_indice() {
 	return current %8;
 }
 
-unsigned short sched_indice_actual(){
+short sched_indice_actual(){
 	current = current %8;
 	return current 	;
 }
 short sched_proxima_bandera(){
 	currentBanderas +=1;
+
 	while(tareas[currentBanderas] == 0 ){
 		currentBanderas +=1;
 		if(currentBanderas == 8) {
@@ -44,6 +45,7 @@ short sched_proxima_bandera(){
 			break;
 		}
 	}
+	if(currentBanderas == 8) currentBanderas = -1;
 	return currentBanderas;
 }
 

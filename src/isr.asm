@@ -25,6 +25,7 @@ extern game_fondear
 extern game_canonear
 extern imprimir_bandera
 extern sched_bandera_actual
+extern reiniciar_banderas
 
 ;;
 ;; Definición de MACROS
@@ -36,11 +37,22 @@ global _isr%1
 _isr%1:
 
 	pushad
-	call sched_indice_actual
-	push ax
+	cmp word [ejecutandoBanderas],0
+	je .deshabilitarTarea
+	call sched_bandera_actual
+	jmp .sigo
 	
+	.deshabilitarTarea:
+	call sched_indice_actual
+	
+	.sigo:
+	push ax
+	;xchg bx,bx
+	cmp word [habilitadas], 0
+	je .sigueHabiendo
 	dec byte [habilitadas]
 	call inhabilitar_tarea
+	.sigueHabiendo:
 	pop ax	
 	jmp 24<<3:0
 	
@@ -66,6 +78,7 @@ _isr%1:
 ;; -------------------------------------------------------------------------- ;;
 ; Scheduler
 reloj_numero:           dd 0x00000000
+reloj_numero_reloj:           dd 0x00000000
 reloj:                  db '|/-\'
 offset:  				dd 0x00000000
 selector:				dw 0x00000000
@@ -104,8 +117,9 @@ ISR 19
 global _isr32
 _isr32:
     pushad
-    
+    ;xchg bx,bx
     call fin_intr_pic1
+    call proximo_reloj
     call sched
     popad
     iret    
@@ -193,13 +207,14 @@ _isr80:
 global _isr102
 _isr102:
     pushad
-    xchg bx, bx
+    ;xchg bx, bx
     call fin_intr_pic1
+    mov word [pasePorSys],1
     xor eax, eax
     call sched_bandera_actual
     push eax
     call imprimir_bandera
-    xchg bx,bx
+    ;xchg bx,bx
     pop eax
     jmp 24<<3:0
     popad
@@ -214,11 +229,11 @@ _isr102:
 proximo_reloj:
     pushad
     
-    inc DWORD [reloj_numero]
-    mov ebx, [reloj_numero]
+    inc DWORD [reloj_numero_reloj]
+    mov ebx, [reloj_numero_reloj]
     cmp ebx, 0x4
     jl .ok
-        mov DWORD [reloj_numero], 0x0
+        mov DWORD [reloj_numero_reloj], 0x0
         mov ebx, 0
     .ok:
         add ebx, reloj
@@ -229,27 +244,31 @@ proximo_reloj:
     
 sched:
     pushad
+    
+    cmp word [habilitadas],0
+    je .fin
   
 	;xchg bx, bx
     cmp word [ejecutandoBanderas], 1
     jne  .ejecutoSigTarea
-    jmp ejecutarBanderas
+    call ejecutarBanderas
+    jmp .fin
     
     .ejecutoSigTarea:
 	;xchg bx, bx
     inc DWORD [reloj_numero]
     mov ebx, [reloj_numero]
-    cmp ebx, 0x3
+    cmp ebx, 0x4
 	jle .ok
 	
 	 ;xchg bx, bx
 	jmp .banderas
 	
 	.banderas:
-		
-		mov dword [reloj_numero], 0
 	 	mov word [ejecutandoBanderas], 1
-		jmp ejecutarBanderas
+	 	;mov word [pasePorSys],1
+		call ejecutarBanderas
+		jmp .fin
 			
     .ok:
 		;call tareas_arreglo  ; - esto apra debuguear que iban eliminando las tareas adecuadamente
@@ -272,6 +291,17 @@ sched:
 
 ejecutarBanderas:
 	;xchg bx, bx
+	cmp word [pasePorSys],1
+	je .siguienteBandera
+	
+	call sched_bandera_actual
+	push ax
+	dec byte [habilitadas]
+	call inhabilitar_tarea
+	pop ax
+	
+	.siguienteBandera:
+	mov word [pasePorSys],0
 	call sched_proxima_bandera
 	mov cx, ax
 	cmp cx, -1
@@ -280,15 +310,17 @@ ejecutarBanderas:
 	add ax, 33
 	shl ax, 3
 	mov [selector], ax
-	jmp far [offset]
-	
+	jmp far [offset] 
 	ret
+	;jmp sched.fin 
 	
-	.finEjecutarBanderas:	
+	.finEjecutarBanderas:
+	mov dword [reloj_numero], 0	
 	mov word [ejecutandoBanderas], 0 
+	call reiniciar_banderas
 	jmp sched
 	
-	
+
 	
 	
 	

@@ -100,6 +100,14 @@ void error(){
 	 a = c;
 }
 
+void reiniciar_banderas(){
+	unsigned int i = 0;
+	int dosk = 0x2000;
+	for(i = 0; i < 8 ; i ++){
+		tss_banderas[i].eip = *((unsigned int*) (0x11FFC + dosk*i)) + 0x40000000;
+	}
+}
+
 void tss_inicializar() {
 	actualizar_gdt();
 
