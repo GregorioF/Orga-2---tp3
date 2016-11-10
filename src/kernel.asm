@@ -140,7 +140,7 @@ BITS 32
     
     
  ; cargar la tarea inicial    ; saltar a la primer tarea
-    	        
+ 
     mov ax, 23 << 3 
 
 	ltr ax

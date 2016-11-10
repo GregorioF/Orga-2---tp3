@@ -19,6 +19,8 @@ extern sched_proximo_indice
 extern inhabilitar_tarea
 extern sched_indice_actual
 extern sched_proxima_bandera
+extern imprimir_banderitas
+extern tareas_arreglo
 
 ;;
 ;; Definición de MACROS
@@ -64,6 +66,8 @@ reloj:                  db '|/-\'
 offset:  				dd 0x00000000
 selector:				dw 0x00000000
 habilitadas:			dw 0x00000008
+ejecutandoBanderas: 	dw 0x0
+pasePorSys: 			dw 0x0
 
 ;;
 ;; Rutina de atención de las EXCEPCIONES
@@ -96,7 +100,7 @@ ISR 19
 global _isr32
 _isr32:
     pushad
-    
+    ;xchg bx, bx
     call fin_intr_pic1
     call sched
     popad
@@ -138,6 +142,7 @@ _isr50:
 
 global _isr66
 _isr66:
+    
     pushad
     call fin_intr_pic1
     jmp 24<<3:0
@@ -150,7 +155,7 @@ _isr66:
 ;; -------------------------------------------------------------------------- ;;
 proximo_reloj:
     pushad
-
+    
     inc DWORD [reloj_numero]
     mov ebx, [reloj_numero]
     cmp ebx, 0x4
@@ -166,30 +171,33 @@ proximo_reloj:
     
 sched:
     pushad
+  
+	xchg bx, bx
+    cmp word [ejecutandoBanderas], 1
+    jne  .ejecutoSigTarea
+    call ejecutarBanderas
     
+    .ejecutoSigTarea:
+	xchg bx, bx
     inc DWORD [reloj_numero]
     mov ebx, [reloj_numero]
     cmp ebx, 0x3
-	jl .ok
-	;	mov ecx, [habilitadas]
-	;	add ecx, ebx
-	;	cmp ecx, ebx
-	;	jge .sigo
-		
-    ;   mov DWORD [reloj_numero], 0x0
-    ;   call sched_proxima_bandera
-    ;  add ax, 33
-    ;    shl ax, 3
-    ;    xchg bx, bx
-    ;    mov [selector],ax
-    ;    xchg bx, bx
-    ;    jmp far [offset]
-       
-	;	jmp .fin
+	jle .ok
 	
-	;.sigo:
-	;	mov dword[reloj_numero], 0
+	 ;xchg bx, bx
+	jmp .banderas
+	
+	.banderas:
+		
+		mov dword [reloj_numero], 0
+	 	mov word [ejecutandoBanderas], 1
+		call ejecutarBanderas
+		jmp .fin
+			
     .ok:
+		call tareas_arreglo  ; - esto apra debuguear que iban eliminando las tareas adecuadamente
+		mov edx, ejecutandoBanderas ;  -- lo mismo
+	    ;xchg bx, bx
 		call sched_indice_actual
 		mov cx, ax
 		call sched_proximo_indice
@@ -204,3 +212,46 @@ sched:
     .fin: 
 		popad
 		ret
+
+ejecutarBanderas:
+	xchg bx, bx
+	call sched_proxima_bandera
+	mov cx, ax
+	cmp cx, -1
+	je .finEjecutarBanderas
+	
+	add ax, 33
+	shl ax, 3
+	mov [selector], ax
+	jmp far [offset]
+	
+	ret
+	
+	.finEjecutarBanderas:	
+	mov word [ejecutandoBanderas], 0 
+	ret
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

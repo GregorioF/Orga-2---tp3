@@ -6,6 +6,7 @@
 */
 
 #include "sched.h"
+
 int tareas [8]={1,1,1,1,1,1,1,1};
 int banderas [8]={1,1,1,1,1,1,1,1};
 int current = -1;
@@ -31,14 +32,22 @@ short sched_proximo_indice() {
 }
 
 unsigned short sched_indice_actual(){
-	return current %8;
+	current = current %8;
+	return current 	;
 }
-unsigned short sched_proxima_bandera(){
-	currentBanderas +=1 ;
-	int i = 0;
-	while(tareas[currentBanderas%8] == 0 && i < 20){
+short sched_proxima_bandera(){
+	currentBanderas +=1;
+	while(tareas[currentBanderas] == 0 ){
 		currentBanderas +=1;
-		i = i+1;
+		if(currentBanderas == 8) {
+			currentBanderas = -1;
+			break;
+		}
 	}
-	return currentBanderas%8;
+	return currentBanderas;
 }
+
+int* tareas_arreglo (){
+	return tareas;
+}
+
