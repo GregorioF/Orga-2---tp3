@@ -2,7 +2,18 @@
 \par{}
 
 \subsection*{Definición de las entradas en la GDT para las tareas}
-\par{}
+\par{Cada tarea creada necesita tener su descriptor de TSS en la GDT. Este nos permite acceder a la TSS de cada tarea, que definimos completando los campos del struct tss que se declara en tss.h. Guardamos la tarea\_inicial en la posición 23 de la GDT y la tarea Idle en la posición 24 (valores referenciados respectivamente por las constantes globales TAREA\_INICIAL y TAREA\_IDLE definidas en defines.h). Las nuevas entradas de la GDT son inicializadas al llamar desde kernel.asm a la función tss\_inicializar implementada en tss.c.}
+
+\par{Se completaron los campos de los descriptores de las TSS de la siguiente forma:}
+\begin{itemize}
+\item[•] \textbf{Límite:} Como el tamaño de la estructura tss es 104, al restarle 1 obtenemos 0x67.
+\item[•] \textbf{Tipo:} Este campo tiene 4 bits: 10B1, donde B (\textit{busy}) representa que esté en uso la tarea asociada a este descriptor. Inicialmente la tarea no estará cargada así que B se seteará en 0, por lo que Tipo contendrá 0x9.
+\item[•] \textcolor{red}{\textbf{Nivel de privilegio:} Queremos que sólo el \textit{kernel} pueda realizar el cambio de tarea a esta, por lo que completamos con 0x0.}
+\item[•] \textbf{Presente:} Este campo tiene 0x1 dado que hay una tss asociada a este descriptor.
+\item[•] \textbf{System:} En este campo se pone 0 cuando se trata de contenidos de sistema como ser gdt, ldt, tss y 1 cuando son datos o código, por lo que se puso 0x0.
+\item[•] \textbf{db:} \textcolor{red}{Como se trabaja en 32 bits, se cargó 0x1. ¿POR QUÉ EL TSS DESCRIPTOR NO TIENE UN DB Y AÚN SIENDO ENTRADA DE LA GDT EN LA GDT ESTÁ EN 1?}
+\end{itemize}
+\par{Los demás campos se cargaron en 0.}
 
 
 \subsection*{}
