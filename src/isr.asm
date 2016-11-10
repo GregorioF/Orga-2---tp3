@@ -230,11 +230,10 @@ proximo_reloj:
 sched:
     pushad
   
-	
+	;xchg bx, bx
     cmp word [ejecutandoBanderas], 1
     jne  .ejecutoSigTarea
-    call ejecutarBanderas
-    jmp .fin
+    jmp ejecutarBanderas
     
     .ejecutoSigTarea:
 	;xchg bx, bx
@@ -250,12 +249,11 @@ sched:
 		
 		mov dword [reloj_numero], 0
 	 	mov word [ejecutandoBanderas], 1
-		call ejecutarBanderas
-		jmp .fin
+		jmp ejecutarBanderas
 			
-	.ok:
-		call tareas_arreglo  ; - esto apra debuguear que iban eliminando las tareas adecuadamente
-		mov edx, ejecutandoBanderas ;  -- lo mismo
+    .ok:
+		;call tareas_arreglo  ; - esto apra debuguear que iban eliminando las tareas adecuadamente
+		;mov edx, ejecutandoBanderas ;  -- lo mismo
 	    ;xchg bx, bx
 		call sched_indice_actual
 		mov cx, ax
@@ -273,8 +271,7 @@ sched:
 		ret
 
 ejecutarBanderas:
-	
-	xchg bx, bx
+	;xchg bx, bx
 	call sched_proxima_bandera
 	mov cx, ax
 	cmp cx, -1
@@ -289,8 +286,7 @@ ejecutarBanderas:
 	
 	.finEjecutarBanderas:	
 	mov word [ejecutandoBanderas], 0 
-	ret
-	
+	jmp sched
 	
 	
 	
