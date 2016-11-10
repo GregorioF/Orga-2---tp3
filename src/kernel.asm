@@ -25,6 +25,7 @@ extern imprimir_nombre_del_grupo
 extern mmu_inicializar_dir_tarea
 extern limpiar_pantalla
 extern tss_inicializar
+extern inicializar_mapa
 
 ;; Saltear seccion de datos
 jmp start
@@ -115,6 +116,8 @@ BITS 32
 	
 	call limpiar_pantalla
 	call imprimir_nombre_del_grupo
+	
+	call inicializar_mapa
 
 
     ; inicializar tarea idle     ; inicializar todas las tss    ; inicializar entradas de la gdt de las tsss

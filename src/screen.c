@@ -15,7 +15,16 @@ static const char* a []= {
 };
 
 int posicionTareas [8][3];
+int ultimoMisil = -1;
 
+void inicializar_mapa(){
+	int i = 0;
+	for(i = 0; i < 8; i++){
+		posicionTareas[i][0] = (1048576 + (8192)*i)/4096;
+		posicionTareas[i][1] = (1052672 + (8192)*i)/4096;
+		posicionTareas[i][2] = 0;
+	}
+}
 
 char tabla_traduccion (int eax) {
 	char uno = '1';
@@ -42,33 +51,47 @@ void mostrar_mapa(){
 			}
 		}
 	}
-	
-	for (col = 0; col < 80 ; col++){
+	ca reloj_idle = {.c = 0, .a = C_BG_LIGHT_GREY | C_FG_BLACK};
+	p[24][0] = reloj_idle;
+	for (col = 1; col < 80 ; col++){
 		ca borde = {.c = 0, .a = C_BG_BLACK | C_FG_WHITE};
 		p[24][col] = borde;
 	}
 	
-	for (i=0; i<8; i++){
-		posicionTareas[i][0] = (1048576 + (8192)*i)/4096;
-		posicionTareas[i][1] = (1052672 + (8192)*i)/4096;
-		posicionTareas[i][2] = 0;
+	for (i=0; i<8; i++){				
 		int j = 0;
-		for (j=0; j<2; j++){
+		for (j=0; j<3; j++){
 			
 			int n = posicionTareas[i][j];
 			col = n;
-			fil = fil-1;
+			fil = 0;
 			while ( col >= VIDEO_COLS ){
 					col = col - VIDEO_COLS;
 					fil = fil + 1;
 			}
 			
-			ca tareas = {.c = i+49 , .a = C_BG_BROWN  | C_FG_WHITE};
-			p[fil][col] = tareas;
+			if (p[fil][col].c != 0){
+				ca tareas = {.c = 'x' , .a = C_BG_RED  | C_FG_WHITE};
+				p[fil][col] = tareas;
+			}
+			else{
+				ca tareas = {.c = i+49 , .a = C_BG_BROWN  | C_FG_WHITE};
+				p[fil][col] = tareas;
+			}
 		}
 	}
-			ca anclas = {.c = 'x' , .a = C_BG_RED | C_FG_WHITE};
-			p[0][0] = anclas;
+	
+	if ( ultimoMisil != -1 ){
+		fil = 0;
+		col = ultimoMisil;
+		while ( col >= VIDEO_COLS ){
+					col = col - VIDEO_COLS;
+					fil = fil + 1;
+		}
+		
+		ca misil = {.c = 0 , .a = C_BG_CYAN  | C_FG_WHITE};
+		p[fil][col] = misil;
+	}
 
 		 
 }
@@ -90,35 +113,24 @@ void print_numerito(int eax){
 
 
 
-void actualizar_mapa(unsigned int n, unsigned int movimiento, unsigned int current){
-		n = n/4096;
-		int fil;
-		int col = n;
-		while ( col >= VIDEO_COLS ){
-				col = col - VIDEO_COLS;
-				fil = fil + 1;
-		}
+void actualizar_mapa(unsigned int n, unsigned int m, unsigned int movimiento, unsigned int current){
 		
-		ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
-		
-		if (movimiento == 0){ // fondear o navegar
-			if (p[fil][col].c != 0){
-				p[fil][col].c = 'x';
-				p[fil][col].a = C_BG_RED  | C_FG_WHITE;
-			}
-			else{
-				current = current + 1;
-				char numerito = current + 48;
-				ca temp = {.c = numerito, .a =C_BG_BROWN  | C_FG_WHITE};
-				p[fil][col] = temp;
-			}
+		if (movimiento == 0){
+			//fondear:
+			posicionTareas[current][3] = (n/4096);
 		}
-		else{ // lanzar misil
-			ca temp = {.c = 0, .a =C_BG_GREEN | C_FG_WHITE};
-			p[fil][col] = temp;
+		if (movimiento == 1){
+			//navegar:
+			posicionTareas[current][0] = (n/4096);
+			posicionTareas[current][1] = (m/4096);		
+		}
+		if (movimiento == 2){
+			//lanzar misil:
+			ultimoMisil = (n/4096);
 		}
 		
 }
+
 void imprimir_texto(char* palabra, int n, int currFila, int currCol ){
 	
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
