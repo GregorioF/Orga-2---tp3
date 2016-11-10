@@ -19,8 +19,12 @@ extern sched_proximo_indice
 extern inhabilitar_tarea
 extern sched_indice_actual
 extern sched_proxima_bandera
-extern imprimir_banderitas
 extern tareas_arreglo
+extern game_navegar
+extern game_fondear
+extern game_canonear
+extern imprimir_bandera
+extern sched_bandera_actual
 
 ;;
 ;; Definición de MACROS
@@ -135,19 +139,65 @@ global _isr50
 _isr50:
     pushad
     call fin_intr_pic1
-    mov eax, 0x42
+    xchg bx,bx
+    
+    .fondear:
+    cmp eax, 0x923
+    jne .misil
+    mov eax, cr3
+    push eax
+    push ebx 
+    call game_fondear
+    pop ebx
+    pop eax
+    jmp 24<<3:0
+	jmp .fin
+    
+    .misil:
+    cmp eax, 0x83a
+    jne .navegar 
+    push ecx
+    push ebx    
+    call game_canonear    
+    pop ebx
+    pop ecx    
+    jmp 24<<3:0    
+    jmp .fin
+    
+	.navegar:
+	cmp eax, 0xaef
+	jne .fin	
+	push ecx
+	push ebx
+	mov eax, cr3
+	push eax	
+	call game_navegar
+	pop eax
+	pop ebx
+	pop ecx	
+	jmp 24<<3:0		
+	
+	.fin:
     popad
     iret
+
 
 
 global _isr66
 _isr66:
-    
     pushad
+    xchg bx, bx
     call fin_intr_pic1
+    xor eax, eax
+    call sched_bandera_actual
+    push eax
+    call imprimir_bandera
+    pop eax
     jmp 24<<3:0
     popad
     iret
+
+
 
 
 

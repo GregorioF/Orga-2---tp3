@@ -50,4 +50,7 @@ short sched_proxima_bandera(){
 int* tareas_arreglo (){
 	return tareas;
 }
+unsigned short sched_bandera_actual(){
+		return currentBanderas%8;
+}
 

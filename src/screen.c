@@ -7,6 +7,7 @@
 
 #include "screen.h"
 #include "colors.h"
+#define BANDERA_BUFFER  0x40001000
 
 static const char* a []= {
 "ERROR 0: DIVIDE ERROR", "ERROR 1: RESERVED", "ERROR 2: NMI Interrupt", "ERROR 3: Breakpoint", "ERROR 4: Overflow", "ERROR 5: BOUND Range Exceeded", "ERROR 6: Invalid Opcode (Undefined Opcode)", 
@@ -276,5 +277,35 @@ void screen_pintar_pantalla(){
 	*/
 	
 }
+void imprimir_bandera(unsigned short n){
+	
+	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+	ca(*buffer)[10] = (ca(*)[10]) (BANDERA_BUFFER);
+ 
+    unsigned int fil;
+    unsigned int col;
+	unsigned int i;
+	unsigned int j;
+	
+	if ( n < 4 ){ 
+		i = 3;
+	}
+	else{
+		i = 10;
+	} 
+	
+	if ( n%4 == 0 ) j=2;
+	if ( n%4 == 1 ) j=14;
+	if ( n%4 == 2 ) j=26;
+	if ( n%4 == 3 ) j=38;
 
+
+    for (fil = 0; fil < 5; fil++) {
+        for (col = 0; col < 10; col++) {
+            p[i][j] = buffer[fil][col];
+            j = j+1;
+        }
+        i = i+1;
+    }
+}
 
