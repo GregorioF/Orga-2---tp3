@@ -27,15 +27,15 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x00,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
     },
-    [GDT_COD_L0] = (gdt_entry) {  
+    [GDT_COD_L0] = (gdt_entry) {
         (unsigned short)    0xffff,         /* limit[0:15]  */
         (unsigned short)    0x0000,         /* base[0:15]   */
         (unsigned char)     0x00,           /* base[23:16]  */
-        (unsigned char)     0x0a,           /* type         */  
+        (unsigned char)     0x0a,           /* type         */
         (unsigned char)     0x01,           /* s            */
         (unsigned char)     0x00,           /* dpl          */
         (unsigned char)     0x01,           /* p            */
-        (unsigned char)     0x6,           /* limit[16:19] */ 
+        (unsigned char)     0x6,           /* limit[16:19] */
         (unsigned char)     0x00,           /* avl          */
         (unsigned char)     0x00,           /* l            */
         (unsigned char)     0x01,           /* db           */
@@ -88,7 +88,7 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x00,           /* base[31:24]  */
     },
     [GDT_VID_L0] = (gdt_entry) {
-        (unsigned short)    0x0f9f,         /* limit[0:15]  */
+        (unsigned short)    0x0f9f,         /* limit[0:15] tamaño - 1 = 80 * 25 * 2 = 4000 - 1 = 0x0f9f*/
         (unsigned short)    0x8000,         /* base[0:15]   */
         (unsigned char)     0x0b,           /* base[23:16]  */
         (unsigned char)     0x02,           /* type         */
@@ -102,10 +102,10 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x00,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
     }
-    
-     
+
+
     //tareas........................
-    
+
 };
 
 gdt_descriptor GDT_DESC = {

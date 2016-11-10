@@ -11,7 +11,15 @@
 
 
 \subsection*{Pasar a Modo Protegido}
-\par{Luego de cargar la GDT, creándola con los requisitos ya especificados y cargando el GDT register con \textbf{lgdt}, habilitamos la línea A20 para poder acceder a las posiciones mayores a $2^{20}$ y seteamos el bit de PE de CR0 en 1.}
+\par{Luego de completar la GDT, creándola con los requisitos ya especificados, y habiendo deshabilitado las interrupciones con la instrucción \textbf{cli}, se cargó el GDT register usando \textbf{lgdt}.}
+\par{Después habilitamos la línea A20 para poder acceder a las posiciones mayores a $2^{20}$ y seteamos el bit de PE de CR0 en 1.}
 \par{Así ya con todo el contexto armado, ejectuamos la instrucción \textbf{jmp} 18 $<<$ 3:mp para hacer un jmp far a modo protegido donde ponemos dentro del selector de segmento de código el valor 18 que es la posición dentro de nuestro arreglo gdt, donde está el desciptor de código nivel 0.}
+
+\subsection*{Segmento de pantalla}
+\par{Agregamos una entrada a la GDT para describir el segmento de video.}
+\par{El tamaño era $80*25*2$ por lo que al restarle 1 se obtuvo 0x0F9F, dato con el que se completó el campo ``Límite'', con ``Granularidad'' en 0. En ``Base'' se puso 0xB8000 y se asignó al bit ``S'' un 1 pues el tipo del descriptor era de datos y al campo ``Tipo'' 0x2 dado que era de sólo lectura y accedido.}
+
+\subsection*{Limpiar y pintar la pantalla}
+\par{}
 
 \clearpage

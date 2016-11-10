@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.8.6)  10 NOV 2016 00:27
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.8.6)  10 NOV 2016 02:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1243,33 +1243,33 @@ Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 1.
 
 
-LaTeX Warning: Command \textordmasculine invalid in math mode on input line 17.
+LaTeX Warning: Command \textordmasculine invalid in math mode on input line 25.
 
 
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 17.
+(babel)             in language  on input line 25.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 17.
+(babel)             in language  on input line 25.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 17.
+(babel)             in language  on input line 25.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 17.
+(babel)             in language  on input line 25.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 17.
+(babel)             in language  on input line 25.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 17.
+(babel)             in language  on input line 25.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 17.
+(babel)             in language  on input line 25.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 17.
+(babel)             in language  on input line 25.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 17.
+(babel)             in language  on input line 25.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 17.
+(babel)             in language  on input line 25.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 17.
+(babel)             in language  on input line 25.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 17.
+(babel)             in language  on input line 25.
 [3
 
 ]) (./Ejercicio2.tex
@@ -1566,9 +1566,9 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 84.
 ### simple group (level 1) entered at line 5 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 18460 strings out of 494300
- 310940 string characters out of 6162624
- 404295 words of memory out of 5000000
+ 18462 strings out of 494300
+ 310962 string characters out of 6162624
+ 405296 words of memory out of 5000000
  21368 multiletter control sequences out of 15000+600000
  14804 words of font info for 35 fonts, out of 8000000 for 9000
  378 hyphenation exceptions out of 8191
@@ -1588,10 +1588,10 @@ ec/ecbx1200.600pk> </home/sebastian/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx
 .pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></
 usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on informe.pdf (9 pages, 435833 bytes).
+Output written on informe.pdf (9 pages, 437660 bytes).
 PDF statistics:
- 501 PDF objects out of 1000 (max. 8388607)
- 164 compressed objects within 2 object streams
- 33 named destinations out of 1000 (max. 500000)
+ 505 PDF objects out of 1000 (max. 8388607)
+ 166 compressed objects within 2 object streams
+ 35 named destinations out of 1000 (max. 500000)
  79 words of extra memory for PDF output out of 10000 (max. 10000000)
 
