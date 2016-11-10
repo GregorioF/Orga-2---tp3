@@ -10,7 +10,7 @@
 int tareas [8]={1,1,1,1,1,1,1,1};
 int banderas [8]={1,1,1,1,1,1,1,1};
 int current = -1;
-int currentBanderas = 0;
+int currentBanderas = -1;
 
 void sched_inicializar() {
 }

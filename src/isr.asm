@@ -104,7 +104,7 @@ ISR 19
 global _isr32
 _isr32:
     pushad
-    ;xchg bx, bx
+    xchg bx, bx
     call fin_intr_pic1
     call sched
     popad
@@ -134,12 +134,18 @@ _isr33:
 ;;
 ;; Rutinas de atención de las SYSCALLS
 ;; -------------------------------------------------------------------------- ;;
-
-global _isr50
-_isr50:
+global _isr80
+_isr80:
     pushad
+    
+    push eax
+    push ebx
+    push ecx
     call fin_intr_pic1
     xchg bx,bx
+    pop ecx
+    pop ebx
+    pop eax
     
     .fondear:
     cmp eax, 0x923
@@ -150,22 +156,22 @@ _isr50:
     call game_fondear
     pop ebx
     pop eax
-    jmp 24<<3:0
+    
 	jmp .fin
     
     .misil:
-    cmp eax, 0x83a
+    cmp eax, 0x83A
     jne .navegar 
     push ecx
     push ebx    
     call game_canonear    
     pop ebx
     pop ecx    
-    jmp 24<<3:0    
+        
     jmp .fin
     
 	.navegar:
-	cmp eax, 0xaef
+	cmp eax, 0xAEF
 	jne .fin	
 	push ecx
 	push ebx
@@ -174,17 +180,18 @@ _isr50:
 	call game_navegar
 	pop eax
 	pop ebx
-	pop ecx	
-	jmp 24<<3:0		
+	pop ecx		
 	
 	.fin:
+	jmp 24<<3:0
+	
     popad
     iret
 
 
 
-global _isr66
-_isr66:
+global _isr102
+_isr102:
     pushad
     xchg bx, bx
     call fin_intr_pic1
@@ -228,7 +235,7 @@ sched:
     call ejecutarBanderas
     
     .ejecutoSigTarea:
-	xchg bx, bx
+	;xchg bx, bx
     inc DWORD [reloj_numero]
     mov ebx, [reloj_numero]
     cmp ebx, 0x3
@@ -244,7 +251,7 @@ sched:
 		call ejecutarBanderas
 		jmp .fin
 			
-    .ok:
+	.ok:
 		call tareas_arreglo  ; - esto apra debuguear que iban eliminando las tareas adecuadamente
 		mov edx, ejecutandoBanderas ;  -- lo mismo
 	    ;xchg bx, bx
