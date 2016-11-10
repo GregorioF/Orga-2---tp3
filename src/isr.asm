@@ -275,16 +275,53 @@ proximo_reloj:
     ret
     
 sched:
-    pushad
+    xchg bx, bx
     
     cmp word [habilitadas],0
     je .fin
   
-	;xchg bx, bx
-    cmp word [ejecutandoBanderas], 1
+	cmp word [ejecutandoBanderas], 1
     jne  .ejecutoSigTarea
-    call ejecutarBanderas
-    jmp .fin
+    jmp .ejecutarBanderas
+    
+    
+    .ejecutarBanderas:
+		cmp word [pasePorSys],1
+		je .siguienteBandera
+		
+		call sched_bandera_actual
+		xchg bx, bx
+		push ax
+		dec byte [habilitadas]
+		call inhabilitar_tarea
+		pop ax
+		
+		.siguienteBandera:
+		mov word [pasePorSys],0
+		call sched_proxima_bandera
+		mov cx, ax
+		cmp cx, -1
+		je .finEjecutarBanderas
+		
+		push eax
+		call imprimir_banderitas
+		pop eax
+		add ax, 33
+		shl ax, 3
+		mov [selector], ax
+		jmp far [offset] 
+		
+		jmp .fin 
+		
+		.finEjecutarBanderas:
+		mov dword [reloj_numero], 0	
+		mov word [ejecutandoBanderas], 0 
+		call reiniciar_banderas
+		jmp .ejecutoSigTarea
+		
+    
+    
+    
     
     .ejecutoSigTarea:
 	;xchg bx, bx
@@ -299,17 +336,17 @@ sched:
 	.banderas:
 	 	mov word [ejecutandoBanderas], 1
 	 	mov word [pasePorSys],1
-		call ejecutarBanderas
-		jmp .fin
+		jmp .ejecutarBanderas
 			
     .ok:
-		;call tareas_arreglo  ; - esto apra debuguear que iban eliminando las tareas adecuadamente
+		call tareas_arreglo  ; - esto apra debuguear que iban eliminando las tareas adecuadamente
+		;xchg bx, bx
 		;mov edx, ejecutandoBanderas ;  -- lo mismo
 	    ;xchg bx, bx
 		call sched_indice_actual
 		mov cx, ax
 		call sched_proximo_indice
-	;	xchg bx, bx
+		;xchg bx, bx
 		cmp cx, ax
 		je .fin
         add ax, 25
@@ -318,63 +355,4 @@ sched:
         jmp far [offset]
                 
     .fin: 
-		popad
 		ret
-
-ejecutarBanderas:
-	;xchg bx, bx
-	cmp word [pasePorSys],1
-	je .siguienteBandera
-	
-	call sched_bandera_actual
-	push ax
-	dec byte [habilitadas]
-	;xchg bx, bx
-	call inhabilitar_tarea
-	pop ax
-	
-	.siguienteBandera:
-	mov word [pasePorSys],0
-	call sched_proxima_bandera
-	mov cx, ax
-	cmp cx, -1
-	je .finEjecutarBanderas
-	push eax
-	call imprimir_banderitas
-	pop eax
-	add ax, 33
-	shl ax, 3
-	mov [selector], ax
-	jmp far [offset] 
-	ret
-	;jmp sched.fin 
-	
-	.finEjecutarBanderas:
-	mov dword [reloj_numero], 0	
-	mov word [ejecutandoBanderas], 0 
-	call reiniciar_banderas
-	jmp sched
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
