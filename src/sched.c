@@ -6,6 +6,7 @@
 */
 
 #include "sched.h"
+#include "screen.h"
 
 int tareas [8]={1,1,1,1,1,1,1,1};
 int banderas [8]={1,1,1,1,1,1,1,1};
@@ -15,10 +16,12 @@ int currentBanderas = -1;
 void sched_inicializar() {
 }
 
-void inhabilitar_tarea(unsigned short n){
-		n = n% 8;
+void inhabilitar_tarea(short n){
+	if (n != -1){
 		tareas[n]=0;
 		banderas[n]=0;
+		borrarDelMapa(n);
+	}
 }
 short sched_proximo_indice() {
 	current +=1 ;
@@ -32,7 +35,9 @@ short sched_proximo_indice() {
 }
 
 short sched_indice_actual(){
-	current = current %8;
+	if ( 7 < current ){
+		current = current%8;
+	};
 	return current 	;
 }
 short sched_proxima_bandera(){
@@ -45,14 +50,17 @@ short sched_proxima_bandera(){
 			break;
 		}
 	}
-	if(currentBanderas == 8) currentBanderas = -1;
+	if( 7 < currentBanderas ) currentBanderas = -1;
 	return currentBanderas;
 }
 
 int* tareas_arreglo (){
 	return tareas;
 }
-unsigned short sched_bandera_actual(){
-		return currentBanderas%8;
+short sched_bandera_actual(){
+	if ( 7 < currentBanderas){
+		currentBanderas = currentBanderas%8;
+	}
+	return currentBanderas;
 }
 

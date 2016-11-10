@@ -23,10 +23,12 @@ extern tareas_arreglo
 extern game_navegar
 extern game_fondear
 extern game_canonear
-extern imprimir_bandera
+extern actualizar_bandera
 extern sched_bandera_actual
 extern reiniciar_banderas
 extern imprimir_banderitas
+extern actualizar_mapa
+
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
@@ -37,6 +39,7 @@ global _isr%1
 _isr%1:
 
 	pushad
+	
 	cmp word [ejecutandoBanderas],0
 	je .deshabilitarTarea
 	call sched_bandera_actual
@@ -47,10 +50,10 @@ _isr%1:
 	
 	.sigo:
 	push ax
-	;xchg bx,bx
 	cmp word [habilitadas], 0
 	je .sigueHabiendo
 	dec byte [habilitadas]
+	;xchg bx,bx
 	call inhabilitar_tarea
 	.sigueHabiendo:
 	pop ax	
@@ -138,7 +141,7 @@ _isr33:
     in al, 0x60
     push eax
     call print_numerito
-    xchg bx,bx
+   ; xchg bx,bx
     add esp, 4
     
 
@@ -154,6 +157,7 @@ global _isr80
 _isr80:
     pushad
     
+   ; xchg bx, bx
     push eax
     push ebx
     push ecx
@@ -170,8 +174,17 @@ _isr80:
     push eax
     push ebx 
     call game_fondear
+   ; call sched_indice_actual
     pop ebx
-    pop eax
+    add esp, 4 ;para eliminar el eax pusheado antes
+    ;eax = current
+   ; push eax ; de derecha a izquierda
+   ; mov ecx, 0
+   ; push ecx
+   ; sub esp, 4 ; el lugar del m
+   ; push ebx ;en ebx esta la direccion a donde movi mi ancla 
+   ; call actualizar_mapa
+   ; add esp, 16
     
 	jmp .fin
     
@@ -181,9 +194,17 @@ _isr80:
     push ecx
     push ebx    
     call game_canonear    
+ ;   call sched_indice_actual
     pop ebx
-    pop ecx    
-        
+    add esp, 4
+    
+  ;  push ax ; indice actual
+   ; mov edx, 2
+  ;  push edx ;movimiento
+  ;  push ecx ;basura
+  ;  push ebx ;direccion a donde disparo
+;	call actualizar_mapa
+;	add esp, 16       
     jmp .fin
     
 	.navegar:
@@ -195,8 +216,17 @@ _isr80:
 	push eax	
 	call game_navegar
 	pop eax
+;	call sched_indice_actual
 	pop ebx
-	pop ecx		
+	pop ecx
+;	push ax ; indice actual
+;	mov edx, 1
+;	push edx
+;	push ecx
+;	push ebx
+;	call actualizar_mapa
+;	add esp, 16
+			
 	
 	.fin:
 	jmp 24<<3:0
@@ -215,7 +245,7 @@ _isr102:
     xor eax, eax
     call sched_bandera_actual
     push eax
-    call imprimir_bandera
+    call actualizar_bandera
     ;xchg bx,bx
     pop eax
     jmp 24<<3:0
@@ -260,7 +290,7 @@ sched:
 	;xchg bx, bx
     inc DWORD [reloj_numero]
     mov ebx, [reloj_numero]
-    cmp ebx, 0x4
+    cmp ebx, 0x3
 	jle .ok
 	
 	 ;xchg bx, bx
@@ -268,7 +298,7 @@ sched:
 	
 	.banderas:
 	 	mov word [ejecutandoBanderas], 1
-	 	;mov word [pasePorSys],1
+	 	mov word [pasePorSys],1
 		call ejecutarBanderas
 		jmp .fin
 			
@@ -279,7 +309,7 @@ sched:
 		call sched_indice_actual
 		mov cx, ax
 		call sched_proximo_indice
-		;xchg bx, bx
+	;	xchg bx, bx
 		cmp cx, ax
 		je .fin
         add ax, 25
@@ -299,6 +329,7 @@ ejecutarBanderas:
 	call sched_bandera_actual
 	push ax
 	dec byte [habilitadas]
+	;xchg bx, bx
 	call inhabilitar_tarea
 	pop ax
 	

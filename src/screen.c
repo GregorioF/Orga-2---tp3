@@ -14,8 +14,28 @@ static const char* a []= {
 "ERROR 7: Device Not Available (No Match Coprocessor)", "ERROR 8: Double Fault", "ERROR 9: Coprocessor Segment Overrun (reserved)", "ERROR 10: Invalid TSS", "ERROR 11: Segment Not Present", "ERROR 12: Stack-Segment Fault", "ERROR 13: General Protection", "ERROR 14: Page Fault", "ERROR 15: (Intel reserved. Do not use.)", "ERROR 16: x87 FPU Floating-Point Error (Math Fault)", "ERROR 17: Alignment Check", "ERROR 18: Machine Check", "ERROR 19: SIMD Floating-Point Exception"
 };
 
+ca flags[8][5][10];
 int posicionTareas [8][3];
 int ultimoMisil = -1;
+
+void inicializar_flags(){
+	int i = 0;
+	int j = 0;
+	int k = 0;
+	for (i = 0; i < 8; i++){
+		for (j = 0; j < 5; j++){
+			for (k = 0;k < 10; k++){
+				ca temp = {.c = 0, .a = C_BG_RED | C_FG_BLACK };
+				flags[i][j][k] = temp;
+			}
+		}
+	}
+}
+void borrarDelMapa(unsigned int n){
+	posicionTareas[n][0] = -1;
+	posicionTareas[n][0] = -1;
+	posicionTareas[n][0] = -1;
+}
 
 void inicializar_mapa(){
 	int i = 0;
@@ -63,20 +83,23 @@ void mostrar_mapa(){
 		for (j=0; j<3; j++){
 			
 			int n = posicionTareas[i][j];
-			col = n;
-			fil = 0;
-			while ( col >= VIDEO_COLS ){
-					col = col - VIDEO_COLS;
-					fil = fil + 1;
-			}
-			
-			if (p[fil][col].c != 0){
-				ca tareas = {.c = 'x' , .a = C_BG_RED  | C_FG_WHITE};
-				p[fil][col] = tareas;
-			}
-			else{
-				ca tareas = {.c = i+49 , .a = C_BG_BROWN  | C_FG_WHITE};
-				p[fil][col] = tareas;
+			if (n != -1){
+							
+				col = n;
+				fil = 0;
+				while ( col >= VIDEO_COLS ){
+						col = col - VIDEO_COLS;
+						fil = fil + 1;
+				}
+				
+				if (p[fil][col].c != 0){
+					ca tareas = {.c = 'x' , .a = C_BG_RED  | C_FG_WHITE};
+					p[fil][col] = tareas;
+				}
+				else{
+					ca tareas = {.c = i+49 , .a = C_BG_BROWN  | C_FG_WHITE};
+					p[fil][col] = tareas;
+				}
 			}
 		}
 	}
@@ -117,12 +140,16 @@ void actualizar_mapa(unsigned int n, unsigned int m, unsigned int movimiento, un
 		
 		if (movimiento == 0){
 			//fondear:
-			posicionTareas[current][3] = (n/4096);
+			if(posicionTareas[current][0] != -1){
+				posicionTareas[current][3] = (n/4096);
+			}
 		}
 		if (movimiento == 1){
-			//navegar:
-			posicionTareas[current][0] = (n/4096);
-			posicionTareas[current][1] = (m/4096);		
+			if(posicionTareas[current][0] != -1){
+				//navegar:
+				posicionTareas[current][0] = (n/4096);
+				posicionTareas[current][1] = (m/4096);	
+			}
 		}
 		if (movimiento == 2){
 			//lanzar misil:
@@ -213,6 +240,7 @@ void imprimir_banderitas(){
 			p[24][i] = temp;
 	}
 	//BORDE IZQUIERDO DE SECCION ESTADOS
+	
 	for (i = 16; i < 24; i++){
 		ca temp = {.c = (i-15)+'0', .a = C_BG_LIGHT_GREY | C_FG_BLACK };
 		p[i][1] = temp;
@@ -220,52 +248,66 @@ void imprimir_banderitas(){
 		p[i][0]= temp2;
 		p[i][79]= temp2;
 	}
-
+	
 	for (i = 0; i < 10 ; i ++){
 		for (j = 0; j < 5; j++){
-			ca temp = {.c = 0, .a = C_BG_MAGENTA | C_FG_BLACK };
+			ca temp = flags[0][j][i];
 			p[j+3][i+2] = temp;
+		}
+	}
+	
+	for (i = 0; i < 10 ; i ++){
+		for (j = 0; j < 5; j++){
+			ca temp = flags[1][j][i];
+			p[j+3][i+14] = temp;
+		}
+	}
+	
+	for (i = 0; i < 10 ; i ++){
+		for (j = 0; j < 5; j++){
+			ca temp = flags[2][j][i];
+			p[j+3][i+26] = temp;
+		}
+	}
+	
+	for (i = 0; i < 10 ; i ++){
+		for (j = 0; j < 5; j++){
+			ca temp = flags[3][j][i];
+			p[j+3][i+38] = temp;
+		}
+	}
+	
+	for (i = 0; i < 10 ; i ++){
+		for (j = 0; j < 5; j++){
+			ca temp = flags[4][j][i];
+			p[j+10][i+2] = temp;
+		}
+	}
+	
+	for (i = 0; i < 10 ; i ++){
+		for (j = 0; j < 5; j++){
+			ca temp = flags[5][j][i];
+			p[j+10][i+14] = temp;
+		}
+	}
+	
+	
+	for (i = 0; i < 10 ; i ++){
+		for (j = 0; j < 5; j++){
+			ca temp = flags[6][j][i];
+			p[j+10][i+26] = temp;
 		}
 	}
 	for (i = 0; i < 10 ; i ++){
 		for (j = 0; j < 5; j++){
-			ca temp = {.c = 0, .a = C_BG_MAGENTA | C_FG_BLACK };
-			p[j+3][i+14] = temp;
-		}
-	}for (i = 0; i < 10 ; i ++){
-		for (j = 0; j < 5; j++){
-			ca temp = {.c = 0, .a = C_BG_MAGENTA | C_FG_BLACK };
-			p[j+3][i+26] = temp;
-		}
-	}for (i = 0; i < 10 ; i ++){
-		for (j = 0; j < 5; j++){
-			ca temp = {.c = 0, .a = C_BG_MAGENTA | C_FG_BLACK };
-			p[j+3][i+38] = temp;
-		}
-	}for (i = 0; i < 10 ; i ++){
-		for (j = 0; j < 5; j++){
-			ca temp = {.c = 0, .a = C_BG_MAGENTA | C_FG_BLACK };
-			p[j+10][i+2] = temp;
-		}
-	}for (i = 0; i < 10 ; i ++){
-		for (j = 0; j < 5; j++){
-			ca temp = {.c = 0, .a = C_BG_MAGENTA | C_FG_BLACK };
-			p[j+10][i+14] = temp;
-		}
-	}for (i = 0; i < 10 ; i ++){
-		for (j = 0; j < 5; j++){
-			ca temp = {.c = 0, .a = C_BG_MAGENTA | C_FG_BLACK };
-			p[j+10][i+26] = temp;
-		}
-	}for (i = 0; i < 10 ; i ++){
-		for (j = 0; j < 5; j++){
-			ca temp = {.c = 0, .a = C_BG_MAGENTA | C_FG_BLACK };
+			ca temp = flags[7][j][i];
 			p[j+10][i+38] = temp;
 		}
 	}
 
 }
 	
+
 
 void printear(unsigned int x){
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
@@ -373,36 +415,19 @@ void screen_pintar_pantalla(){
 	*/
 	
 }
-void imprimir_bandera(unsigned short n){
+void actualizar_bandera(unsigned short n){
 	
-	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
 	ca(*buffer)[10] = (ca(*)[10]) (BANDERA_BUFFER);
  
     unsigned int fil;
     unsigned int col;
 	unsigned int i;
-	unsigned int j;
 	
-	if ( n < 4 ){ 
-		j = 3;
-	}
-	else{
-		j = 10;
-	} 
-	
-	if ( n%4 == 0 ) i=2;
-	if ( n%4 == 1 ) i=14;
-	if ( n%4 == 2 ) i=26;
-	if ( n%4 == 3 ) i=38;
-
-	unsigned int aux = i;
     for (fil = 0; fil < 5; fil++) {
-		i = aux;
         for (col = 0; col < 10; col++) {
-            p[j][i] = buffer[fil][col];
+            flags[n][fil][col] = buffer[fil][col];
             i = i+1;
         }
-        j = j+1;
     }
 }
 

@@ -26,7 +26,7 @@ extern mmu_inicializar_dir_tarea
 extern limpiar_pantalla
 extern tss_inicializar
 extern inicializar_mapa
-
+extern inicializar_flags
 ;; Saltear seccion de datos
 jmp start
 
@@ -112,6 +112,7 @@ BITS 32
 
 	call imprimir_nombre_del_grupo
 	
+	call inicializar_flags
 	call imprimir_banderitas
 	
 	call limpiar_pantalla
@@ -147,7 +148,7 @@ BITS 32
     mov ax, 23 << 3 
 
 	ltr ax
-	xchg bx, bx
+	;xchg bx, bx
 	jmp 24<< 3:0
 	
 	
