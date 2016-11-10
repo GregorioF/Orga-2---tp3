@@ -11,6 +11,7 @@
 int tareas[8]={1,1,1,1,1,1,1,1};
 int banderas[8]={1,1,1,1,1,1,1,1};
 int current = -1;
+int currentBanderas = -1;
 \end{lstlisting}
 
 \par{Luego implementamos la función \textbf{sched\_proximo\_indice()}. Esta suma 1 a current y entra en un ciclo en el que se aumenta 1 mientras se encuentren tareas que no estén vivas. Si se recorren todas y no hay ninguna para correr entonces current vuelve a -1, en otro caso queda en current mod 8.}
@@ -24,6 +25,24 @@ short sched_proximo_indice() {
 	}
 	if(i == 20) return -1;
 	return current %8;
+}
+\end{lstlisting}
+
+\subsection*{Función sched\_proxima\_bandera()}
+\par{Usamos un contador currentBanderas para saber qué bandera correspondía correr.}
+\begin{lstlisting}[language={C}]
+short sched_proxima_bandera(){
+	currentBanderas +=1;
+
+	while(tareas[currentBanderas] == 0 ){
+		currentBanderas +=1;
+		if(currentBanderas == 8) {
+			currentBanderas = -1;
+			break;
+		}
+	}
+	if( 7 < currentBanderas ) currentBanderas = -1;
+	return currentBanderas;
 }
 \end{lstlisting}
 
