@@ -288,24 +288,25 @@ void imprimir_bandera(unsigned short n){
 	unsigned int j;
 	
 	if ( n < 4 ){ 
-		i = 3;
+		j = 3;
 	}
 	else{
-		i = 10;
+		j = 10;
 	} 
 	
-	if ( n%4 == 0 ) j=2;
-	if ( n%4 == 1 ) j=14;
-	if ( n%4 == 2 ) j=26;
-	if ( n%4 == 3 ) j=38;
+	if ( n%4 == 0 ) i=2;
+	if ( n%4 == 1 ) i=14;
+	if ( n%4 == 2 ) i=26;
+	if ( n%4 == 3 ) i=38;
 
-
+	unsigned int aux = i;
     for (fil = 0; fil < 5; fil++) {
+		i = aux;
         for (col = 0; col < 10; col++) {
-            p[i][j] = buffer[fil][col];
-            j = j+1;
+            p[j][i] = buffer[fil][col];
+            i = i+1;
         }
-        i = i+1;
+        j = j+1;
     }
 }
 

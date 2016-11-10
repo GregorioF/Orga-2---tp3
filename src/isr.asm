@@ -104,7 +104,7 @@ ISR 19
 global _isr32
 _isr32:
     pushad
-    xchg bx, bx
+    
     call fin_intr_pic1
     call sched
     popad
@@ -142,7 +142,7 @@ _isr80:
     push ebx
     push ecx
     call fin_intr_pic1
-    xchg bx,bx
+    
     pop ecx
     pop ebx
     pop eax
@@ -199,6 +199,7 @@ _isr102:
     call sched_bandera_actual
     push eax
     call imprimir_bandera
+    xchg bx,bx
     pop eax
     jmp 24<<3:0
     popad
@@ -229,10 +230,11 @@ proximo_reloj:
 sched:
     pushad
   
-	xchg bx, bx
+	
     cmp word [ejecutandoBanderas], 1
     jne  .ejecutoSigTarea
     call ejecutarBanderas
+    jmp .fin
     
     .ejecutoSigTarea:
 	;xchg bx, bx
@@ -271,6 +273,7 @@ sched:
 		ret
 
 ejecutarBanderas:
+	
 	xchg bx, bx
 	call sched_proxima_bandera
 	mov cx, ax

@@ -144,7 +144,7 @@ BITS 32
     mov ax, 23 << 3 
 
 	ltr ax
-	
+	xchg bx, bx
 	jmp 24<< 3:0
 	
 	
