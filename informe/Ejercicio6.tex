@@ -18,6 +18,7 @@
 
 \subsection*{TSS de Idle}
 \par{Como la tarea Idle se encuentra en la dirección 0x00020000, pusimos en eip 0x20000. Además, como la pila se aloja en la página 0x0002A000 y será mapeada con identity mapping, completamos ebp y esp con 0x2A000.}
+\par{EFLAGS se completó con 0x202.}
 
 \subsection*{TSS de las demás tareas}
 \par{Como el código de las tareas está mapeado a partir de la dirección 0x40000000 completamos el eip de los navíos con esa dirección.}

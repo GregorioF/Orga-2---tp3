@@ -5,7 +5,26 @@
 \par{}
 
 
-\subsection*{}
-\par{}
+\subsection*{Función sched\_proximo\_indice()}
+\par{Primero declaramos dos arreglos de 8 posiciones, uno de tareas y otro de banderas, para indicar si las tareas estaban vivas. Además, usamos un contador current para saber qué tarea correspondía correr.}
+\begin{lstlisting}[language={C}]
+int tareas[8]={1,1,1,1,1,1,1,1};
+int banderas[8]={1,1,1,1,1,1,1,1};
+int current = -1;
+\end{lstlisting}
+
+\par{Luego implementamos la función \textbf{sched\_proximo\_indice()}. Esta suma 1 a current y entra en un ciclo en el que se aumenta 1 mientras se encuentren tareas que no estén vivas. Si se recorren todas y no hay ninguna para correr entonces current vuelve a -1, en otro caso queda en current mod 8.}
+\begin{lstlisting}[language={C}]
+short sched_proximo_indice() {
+	current +=1 ;
+	int i = 0;
+	while(tareas[current%8] == 0 && i < 20){
+		current +=1;
+		i = i+1;
+	}
+	if(i == 20) return -1;
+	return current %8;
+}
+\end{lstlisting}
 
 \clearpage
