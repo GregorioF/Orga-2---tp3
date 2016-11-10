@@ -14,6 +14,8 @@ static const char* a []= {
 "ERROR 7: Device Not Available (No Match Coprocessor)", "ERROR 8: Double Fault", "ERROR 9: Coprocessor Segment Overrun (reserved)", "ERROR 10: Invalid TSS", "ERROR 11: Segment Not Present", "ERROR 12: Stack-Segment Fault", "ERROR 13: General Protection", "ERROR 14: Page Fault", "ERROR 15: (Intel reserved. Do not use.)", "ERROR 16: x87 FPU Floating-Point Error (Math Fault)", "ERROR 17: Alignment Check", "ERROR 18: Machine Check", "ERROR 19: SIMD Floating-Point Exception"
 };
 
+int posicionTareas [8][3];
+
 
 char tabla_traduccion (int eax) {
 	char uno = '1';
@@ -24,17 +26,99 @@ char tabla_traduccion (int eax) {
 	return 0;
 }
 
-void print_numerito(int eax){
-	if (eax == 0x32) imprimir_banderitas();
-	else{ 
-
-		char numerito = tabla_traduccion(eax);
-		ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
-		ca temp = {.c = numerito, .a = C_BG_RED  | C_FG_WHITE};
-		p[0][79] = temp;
+void mostrar_mapa(){
+	int i = 0;
+	
+	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+	int fil = 0;
+	int col = 0;
+	for ( fil = 0; fil < 25; fil++ ){
+		for ( col = 0; col < 80 ; col++){
+			ca mar = {.c = 0, .a = C_BG_BLUE  | C_FG_WHITE};
+			p[fil][col] = mar;
+			if ((fil*VIDEO_COLS) + col < 256 ){
+					ca tierra = {.c = 0, .a = C_BG_GREEN  | C_FG_WHITE};
+					p[fil][col] = tierra;
+			}
 		}
+	}
+	
+	for (col = 0; col < 80 ; col++){
+		ca borde = {.c = 0, .a = C_BG_BLACK | C_FG_WHITE};
+		p[24][col] = borde;
+	}
+	
+	for (i=0; i<8; i++){
+		posicionTareas[i][0] = (1048576 + (8192)*i)/4096;
+		posicionTareas[i][1] = (1052672 + (8192)*i)/4096;
+		posicionTareas[i][2] = 0;
+		int j = 0;
+		for (j=0; j<2; j++){
+			
+			int n = posicionTareas[i][j];
+			col = n;
+			fil = fil-1;
+			while ( col >= VIDEO_COLS ){
+					col = col - VIDEO_COLS;
+					fil = fil + 1;
+			}
+			
+			ca tareas = {.c = i+49 , .a = C_BG_BROWN  | C_FG_WHITE};
+			p[fil][col] = tareas;
+		}
+	}
+			ca anclas = {.c = 'x' , .a = C_BG_RED | C_FG_WHITE};
+			p[0][0] = anclas;
+
+		 
 }
 
+void print_numerito(int eax){
+	if (eax == 0x12) imprimir_banderitas();
+	else{
+		if(eax == 0x32){
+			mostrar_mapa();
+		}
+		else{ 
+			char numerito = tabla_traduccion(eax);
+			ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+			ca temp = {.c = numerito, .a = C_BG_RED  | C_FG_WHITE};
+			p[0][79] = temp;
+		}
+	}
+}
+
+
+
+void actualizar_mapa(unsigned int n, unsigned int movimiento, unsigned int current){
+		n = n/4096;
+		int fil;
+		int col = n;
+		while ( col >= VIDEO_COLS ){
+				col = col - VIDEO_COLS;
+				fil = fil + 1;
+		}
+		
+		ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+		
+		if (movimiento == 0){ // fondear o navegar
+			if (p[fil][col].c != 0){
+				p[fil][col].c = 'x';
+				p[fil][col].a = C_BG_RED  | C_FG_WHITE;
+			}
+			else{
+				current = current + 1;
+				char numerito = current + 48;
+				ca temp = {.c = numerito, .a =C_BG_BROWN  | C_FG_WHITE};
+				p[fil][col] = temp;
+			}
+		}
+		else{ // lanzar misil
+			ca temp = {.c = 0, .a =C_BG_GREEN | C_FG_WHITE};
+			p[fil][col] = temp;
+		}
+		
+}
 void imprimir_texto(char* palabra, int n, int currFila, int currCol ){
 	
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;

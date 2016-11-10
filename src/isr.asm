@@ -26,7 +26,7 @@ extern game_canonear
 extern imprimir_bandera
 extern sched_bandera_actual
 extern reiniciar_banderas
-
+extern imprimir_banderitas
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
@@ -138,7 +138,9 @@ _isr33:
     in al, 0x60
     push eax
     call print_numerito
+    xchg bx,bx
     add esp, 4
+    
 
     popad
     iret
@@ -306,7 +308,9 @@ ejecutarBanderas:
 	mov cx, ax
 	cmp cx, -1
 	je .finEjecutarBanderas
-	
+	push eax
+	call imprimir_banderitas
+	pop eax
 	add ax, 33
 	shl ax, 3
 	mov [selector], ax
