@@ -1,5 +1,5 @@
 \section{Ejercicio 6}
-\par{}
+\par{A cada tarea le corresponden dos TSS, una para el código de la tarea y otra para la ejecución de la función “bandera”.}
 
 \subsection*{Definición de las entradas en la GDT para las tareas}
 \par{Cada tarea creada necesita tener su descriptor de TSS en la GDT. Este nos permite acceder a la TSS de cada tarea, que definimos completando los campos del struct tss que se declara en tss.h. Guardamos la tarea\_inicial en la posición 23 de la GDT y la tarea Idle en la posición 24 (valores referenciados respectivamente por las constantes globales TAREA\_INICIAL y TAREA\_IDLE definidas en defines.h). Las nuevas entradas de la GDT son inicializadas al llamar desde kernel.asm a la función tss\_inicializar implementada en tss.c.}
@@ -11,12 +11,19 @@
 \item[•] \textcolor{red}{\textbf{Nivel de privilegio:} Queremos que sólo el \textit{kernel} pueda realizar el cambio de tarea a esta, por lo que completamos con 0x0.}
 \item[•] \textbf{Presente:} Este campo tiene 0x1 dado que hay una tss asociada a este descriptor.
 \item[•] \textbf{System:} En este campo se pone 0 cuando se trata de contenidos de sistema como ser gdt, ldt, tss y 1 cuando son datos o código, por lo que se puso 0x0.
-\item[•] \textbf{db:} \textcolor{red}{Como se trabaja en 32 bits, se cargó 0x1. ¿POR QUÉ EL TSS DESCRIPTOR NO TIENE UN DB Y AÚN SIENDO ENTRADA DE LA GDT EN LA GDT ESTÁ EN 1?}
+\item[•] \textbf{db:} Como se trabaja en 32 bits, se cargó 0x1.
 \end{itemize}
 \par{Los demás campos se cargaron en 0.}
 
 
-\subsection*{}
+\subsection*{TSS de Idle}
+\par{Como la tarea Idle se encuentra en la dirección 0x00020000, pusimos en eip 0x20000. Además, como la pila se aloja en la página 0x0002A000 y será mapeada con identity mapping, completamos ebp y esp con 0x2A000.}
+
+\subsection*{TSS de las demás tareas}
+\par{Como el código de las tareas está mapeado a partir de la dirección 0x40000000 completamos el eip de los navíos con esa dirección.}
+
+\subsection*{Código para la ejecución de la tarea Idle}
 \par{}
+
 
 \clearpage

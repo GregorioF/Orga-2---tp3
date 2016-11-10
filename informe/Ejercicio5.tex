@@ -1,11 +1,43 @@
 \section{Ejercicio 5}
 \par{}
 
-\subsection*{}
-\par{}
+\subsection*{Entradas en la IDT}
+\par{Por el posible caso de que se modificaran los registros dentro de la interrupción, será necesario salvar el estado de los registros al entrar en la rutina (con la instrucción \textbf{pushad}) y restaurarlos antes de salir de ella (con
+la instrucción \textbf{popad}).}
 
 
-\subsection*{}
+\subsection*{Rutina asociada a la interrupción de reloj}
+\par{Después de llamar a la rutina \textbf{proximo\_reloj}, que se encarga de mostrar cada vez que se llame, la animación de un cursor rotando en la esquina inferior derecha de la pantalla, y antes del fin de la rutina, debemos rehabilitar las interrupciones, y esto lo hacemos con la instrucción \textbf{call fin\_intr\_pic1}.}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+global _isr32
+_isr32:
+    pushad
+    call proximo_reloj
+    call fin_intr_pic1
+    popad
+    iret
+\end{lstlisting}
+
+\subsection*{Rutina asociada a la interrupción de teclado}
+\par{Esta rutina primero lee utilizando la instrucción \textbf{in al, 0x60} el valor almacenado en el puerto 0x60, que dependerá de si la acción realizada en el teclado sea apretar una tecla o soltarla y de qué tecla sea.}
+\par{Este valor queda en el registro \textbf{eax}, que se pushea para luego llamar a \textbf{print\_numerito}, una función que realiza lo que corresponda sobre la pantalla.}
+\par{Finalmente, se informa al PIC que se pueden rehabilitar las interrupciones.}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+global _isr33
+_isr33:
+    pushad
+    xor eax, eax
+    in al, 0x60
+    push eax
+    call print_numerito
+    add esp, 4
+    call fin_intr_pic1
+    popad
+    iret
+\end{lstlisting}
+
+\subsection*{Rutinas asociadas a la interrupciones 0x50 y 0x66}
 \par{}
+
 
 \clearpage
