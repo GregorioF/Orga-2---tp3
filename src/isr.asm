@@ -28,6 +28,7 @@ extern sched_bandera_actual
 extern reiniciar_banderas
 extern imprimir_banderitas
 extern actualizar_mapa
+extern debugger
 
 ;;
 ;; Definición de MACROS
@@ -54,13 +55,35 @@ _isr%1:
 	cmp word [habilitadas], 0
 	je .sigueHabiendo
 	dec byte [habilitadas]
-	xchg bx,bx
 	mov edi, %1;
 	push edi
+	xchg bx, bx
 	call inhabilitar_tarea
 	call imprimir_banderitas
 	.sigueHabiendo:
 	add esp, 8	
+	
+	;xchg bx,bx
+	mov edi, ds
+	push edi
+	mov edi, es
+	push edi
+	mov edi, gs
+	push edi
+	mov edi, fs
+	push edi
+	mov edi, cr4
+	push edi
+	mov edi, cr3
+	push edi
+	mov edi, cr2
+	push edi
+	mov edi, cr0
+	push edi
+	call debugger
+	;xchg bx, bx
+	add esp, 32	
+	
 	jmp 24<<3:0
 	
 	popad
@@ -247,6 +270,28 @@ _isr102:
 		call inhabilitar_tarea
 		add esp, 8
 		dec byte [habilitadas]
+		
+		;xchg bx,bx
+		mov edi, ds
+		push edi
+		mov edi, es
+		push edi
+		mov edi, gs
+		push edi
+		mov edi, fs
+		push edi
+		mov edi, cr4
+		push edi
+		mov edi, cr3
+		push edi
+		mov edi, cr2
+		push edi
+		mov edi, cr0
+		push edi
+		call debugger
+		;xchg bx, bx
+		add esp, 32	
+				
 		jmp 24<<3:0
 		popad
 		iret
@@ -296,6 +341,27 @@ sched:
 		call inhabilitar_tarea
 		pop edi
 		pop ax
+		
+		;xchg bx,bx
+		mov edi, ds
+		push edi
+		mov edi, es
+		push edi
+		mov edi, gs
+		push edi
+		mov edi, fs
+		push edi
+		mov edi, cr4
+		push edi
+		mov edi, cr3
+		push edi
+		mov edi, cr2
+		push edi
+		mov edi, cr0
+		push edi
+		call debugger
+		;xchg bx, bx
+		add esp, 32	
 		
 		.siguienteBandera:
 		mov word [pasePorSys],0

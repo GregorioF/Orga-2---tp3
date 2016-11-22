@@ -22,6 +22,8 @@ typedef struct ca_s {
     unsigned char a;
 } ca;
 
+char devolver_hex(unsigned int numero, unsigned int n);
+void guardar_hex(unsigned int numero, unsigned int x);
 void mostrar_mapa();
 void printearError(short n,unsigned int error);
 void printear(unsigned int);

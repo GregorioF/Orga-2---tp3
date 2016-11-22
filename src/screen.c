@@ -15,19 +15,50 @@ static const char* a []= {
 "Stack-Segment Fault", "General Protection", "Page Fault", "RESERVED", "Floating-Point Error", "Alignment Check", "Machine Check", "SIMD Floating-Point Exception"
 };
 
+static const char* registros[] = {"EAX", "EBX", "ECX", "EDX", "ESI", "EDI", "EBP", "ESP", "EIP", "CR0", "CR2", "CR3", "CR4", "CS", "DS", "ES", "FS", "GS", "SS", "EFLAGS" };
 int mapa = 0;
 ca flags[8][5][10];
 int posicionTareas [8][3];
-int paginasTareas [8][4];
+char paginasTareas [8][4][8];
 int ultimoMisil = -1;
 char prueba[8][79];
 int ultimoError = -1;
 int ultimoNavio = -1;
 static const char navio[6] = {"NAVIO "}; 
 static const char bandera[28] = {"ERROR BANDERA               "};
+char debug[20][8];
+
+void debugger(unsigned int cr0, unsigned int cr2, unsigned int cr3, unsigned int cr4, unsigned int fs, unsigned int gs, 
+unsigned int es, unsigned int ds, unsigned int edi, unsigned int esi, unsigned int ebp, unsigned int esp2, unsigned int ebx, 
+unsigned int edx, unsigned int ecx, unsigned int eax, unsigned int ss, unsigned int esp, unsigned int eflags, unsigned int cs, unsigned int eip){
+		guardar_hex(eax, 0);
+		guardar_hex(ebx, 1);
+		guardar_hex(ecx, 2);
+		guardar_hex(edx, 3);
+		guardar_hex(esi, 4);
+		guardar_hex(edi, 5);
+		guardar_hex(ebp, 6);
+		guardar_hex(esp, 7);
+		guardar_hex(eip, 8);
+		guardar_hex(cr0, 9);
+		guardar_hex(cr2, 10);
+		guardar_hex(cr3, 11);
+		guardar_hex(cr4, 12);
+		guardar_hex(cs, 13);
+		guardar_hex(ds, 14);
+		guardar_hex(es, 15);
+		guardar_hex(fs, 16);
+		guardar_hex(gs, 17);
+		guardar_hex(ss, 18);
+		guardar_hex(eflags, 19);
+}
+
 
 void printearError(short n,unsigned int error){
-	paginasTareas[n][3] = error;
+	unsigned int i = 0;
+	for (i = 0; i < 8 ; i++){
+		paginasTareas[n][3][i] = a[error][i];
+	}
 	ultimoError = error;
 	ultimoNavio = n;
 	imprimir_banderitas();
@@ -100,11 +131,17 @@ void inicializar_mapa(){
 	for(i = 0; i < 8; i++){
 		posicionTareas[i][0] = (1048576 + (8192)*i)/4096;
 		posicionTareas[i][1] = (1052672 + (8192)*i)/4096;
-		posicionTareas[i][2] = 0;		
-		//paginasTareas[i][0] = (0x100000 + (0x2000)*i);
-		//paginasTareas[i][1] = (0x101000 + (0x2000)*i);
-		//paginasTareas[i][2] = 0;
-		paginasTareas[i][3] = -1;
+		posicionTareas[i][2] = 0;	
+		int j = 0;
+		int k = 7;
+		for (j = 0; j < 8; j++){
+			paginasTareas[i][0][j] = devolver_hex(0x100000 + (0x2000)*i,k);
+			paginasTareas[i][1][j] = devolver_hex(0x101000 + (0x2000)*i,k);
+			paginasTareas[i][2][j] = '0';
+			k-=1;
+		}
+		
+		paginasTareas[i][3][0] = 0;
 	}
 }
 
@@ -211,6 +248,10 @@ void actualizar_mapa(unsigned int n, unsigned int m, unsigned int movimiento, un
 			//fondear:
 			if(posicionTareas[current][0] != -1){
 				posicionTareas[current][3] = (n/4096);
+				int i = 0;
+				for (i=0; i < 8; i++){
+					paginasTareas[n][2][i] = devolver_hex(n,i);
+				}
 			}
 		}
 		if (movimiento == 1){
@@ -218,6 +259,11 @@ void actualizar_mapa(unsigned int n, unsigned int m, unsigned int movimiento, un
 				//navegar:
 				posicionTareas[current][0] = (n/4096);
 				posicionTareas[current][1] = (m/4096);	
+				int i = 0;
+				for (i=0; i < 8; i++){
+					paginasTareas[n][0][i] = devolver_hex(n,i);
+					paginasTareas[n][1][i] = devolver_hex(m,i);
+				}
 			}
 		}
 		if (movimiento == 2){
@@ -281,10 +327,39 @@ void imprimir_banderitas(){
 
 		//ARMAMOS SECCION DE ULTIMO ERROR 
 		for (i = 2; i < 15; i++){
-				for(j = 50; j < 79; j++){
+				for (j = 50; j < 79; j++){
 					ca temp = {.c = 0, .a = C_BG_BLACK | C_FG_WHITE };
 					p[i][j] = temp;
+					}
+				for (j = 51; registros[i-2][j-51]!= 0; j++){
+					p[i][j].c = registros[i-2][j-51];
 				}
+				for(j = 55; j < 63; j++){
+					ca temp = {.c = debug[i-2][j-55], .a = C_BG_BLACK | C_FG_WHITE };
+					p[i][j] = temp;
+				}
+				
+		}
+		for (i = 2; i  <  8; i++){
+			for (j = 67; registros[i+11][j-67]!= 0; j++){
+					p[i][j].c = registros[i+11][j-67];
+				}
+			for (j = 70; j < 78; j++){
+				ca temp = {.c = debug[i+11][j-70], .a = C_BG_BLACK | C_FG_WHITE };
+				p[i][j] = temp;
+
+			}
+		}
+		
+		p[9][67].c = 'E';
+		p[9][68].c = 'F';
+		p[9][69].c = 'L';
+		p[9][70].c = 'A';
+		p[9][71].c = 'G';
+		p[9][72].c = 'S';
+		for (i = 70; i < 79; i++){
+			ca temp = {.c = debug[19][i-70], .a = C_BG_BLACK | C_FG_WHITE };
+			p[10][i] = temp;
 		}
 		//PONEMOS FRAJNA AZUL SOBRE LA SECCION DE ERROR
 		
@@ -317,11 +392,23 @@ void imprimir_banderitas(){
 		for (i = 2; i < 79; i++){
 			for (j = 16; j < 24; j++){
 				ca temp = {.c = prueba[j-16][i], .a = C_BG_CYAN | C_FG_BLACK };
-				if (paginasTareas[j-16][3] != -1){
+				if (paginasTareas[j-16][3][0] != 0){
 					temp.a = C_BG_BROWN | C_FG_BLACK;
 				}
 				p[j][i] = temp;
 			}
+		}
+		for (j = 16;j < 24; j++){
+			for (i = 8; i < 16; i++){
+				p[j][i].c = paginasTareas[j-16][0][i-8];
+			}
+			for (i = 22; i < 30; i++){
+				p[j][i].c = paginasTareas[j-16][1][i-22];
+			}
+			for (i = 36; i < 44; i++){
+				p[j][i].c = paginasTareas[j-16][2][i-36];
+			}
+			
 		}
 		//PONEMOS LA ULTIMA LINEA EN NEGRO 
 		for (i = 0; i < VIDEO_COLS; i++){
@@ -438,8 +525,21 @@ void print(const char * text, unsigned int x, unsigned int y, unsigned short att
     }
 }
 
-void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, unsigned short attr) {
-    ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+char devolver_hex(unsigned int numero,unsigned int n) {
+    char hexa[] = {0,0,0,0,0,0,0,0};
+    char letras[16] = "0123456789ABCDEF";
+    hexa[0] = letras[ ( numero & 0x0000000F ) >> 0  ];
+    hexa[1] = letras[ ( numero & 0x000000F0 ) >> 4  ];
+    hexa[2] = letras[ ( numero & 0x00000F00 ) >> 8  ];
+    hexa[3] = letras[ ( numero & 0x0000F000 ) >> 12 ];
+    hexa[4] = letras[ ( numero & 0x000F0000 ) >> 16 ];
+    hexa[5] = letras[ ( numero & 0x00F00000 ) >> 20 ];
+    hexa[6] = letras[ ( numero & 0x0F000000 ) >> 24 ];
+    hexa[7] = letras[ ( numero & 0xF0000000 ) >> 28 ];
+	return hexa[n];
+}
+
+void guardar_hex(unsigned int numero, unsigned int x) {
     int i;
     char hexa[8];
     char letras[16] = "0123456789ABCDEF";
@@ -451,9 +551,8 @@ void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, un
     hexa[5] = letras[ ( numero & 0x00F00000 ) >> 20 ];
     hexa[6] = letras[ ( numero & 0x0F000000 ) >> 24 ];
     hexa[7] = letras[ ( numero & 0xF0000000 ) >> 28 ];
-    for(i = 0; i < size; i++) {
-        p[y][x + size - i - 1].c = hexa[i];
-        p[y][x + size - i - 1].a = attr;
+    for(i = 0; i < 8; i++) {
+		debug[x][i] = hexa[i];
     }
 }
 
