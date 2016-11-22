@@ -55,10 +55,8 @@ unsigned int edx, unsigned int ecx, unsigned int eax, unsigned int ss, unsigned 
 
 
 void printearError(short n,unsigned int error){
-	unsigned int i = 0;
-	for (i = 0; i < 8 ; i++){
-		paginasTareas[n][3][i] = a[error][i];
-	}
+	
+	paginasTareas[n][3][0] = error+48;
 	ultimoError = error;
 	ultimoNavio = n;
 	imprimir_banderitas();
@@ -357,7 +355,7 @@ void imprimir_banderitas(){
 		p[9][70].c = 'A';
 		p[9][71].c = 'G';
 		p[9][72].c = 'S';
-		for (i = 70; i < 79; i++){
+		for (i = 70; i < 78; i++){
 			ca temp = {.c = debug[19][i-70], .a = C_BG_BLACK | C_FG_WHITE };
 			p[10][i] = temp;
 		}
@@ -408,7 +406,19 @@ void imprimir_banderitas(){
 			for (i = 36; i < 44; i++){
 				p[j][i].c = paginasTareas[j-16][2][i-36];
 			}
-			
+			char num = (paginasTareas[j-16][3][0]);
+			if (num != 0 && (num-48) < 20){
+				for (i = 55; a[num-48][i-55] != 0 ; i++){
+					p[j][i].c = a[num-48][i-55];
+				}
+			}
+			else{
+				if((num-48) == 20){
+					for (i = 55; bandera[i-55] != 0 ; i++){
+						p[j][i].c = bandera[i-55];
+					}	
+				}
+			}
 		}
 		//PONEMOS LA ULTIMA LINEA EN NEGRO 
 		for (i = 0; i < VIDEO_COLS; i++){

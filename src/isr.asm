@@ -264,7 +264,7 @@ _isr102:
 	.inhabilitarTarea:
 		call sched_indice_actual
 		push eax
-		mov edi, 21
+		mov edi, 20
 		push edi
 		xchg bx, bx
 		call inhabilitar_tarea
