@@ -54,7 +54,7 @@ _isr%1:
 	cmp word [habilitadas], 0
 	je .sigueHabiendo
 	dec byte [habilitadas]
-	;xchg bx,bx
+	xchg bx,bx
 	mov edi, %1;
 	push edi
 	call inhabilitar_tarea
@@ -162,7 +162,7 @@ global _isr80
 _isr80:
     pushad
     
-   ; xchg bx, bx
+    ;xchg bx, bx
     push eax
     push ebx
     push ecx
@@ -210,7 +210,7 @@ _isr80:
 	call game_navegar
 	add esp, 16
 			
-	
+	;xchg bx,bx
 	.fin:
 	jmp 24<<3:0
 	
@@ -227,14 +227,29 @@ _isr102:
     mov word [pasePorSys],1
     xor eax, eax
     call sched_bandera_actual
+    cmp eax, -1
+    je .inhabilitarTarea
     push eax
     call actualizar_bandera
     ;xchg bx,bx
     pop eax
+    
     jmp 24<<3:0
     popad
     iret
 
+	.inhabilitarTarea:
+		call sched_indice_actual
+		push eax
+		mov edi, 21
+		push edi
+		xchg bx, bx
+		call inhabilitar_tarea
+		add esp, 8
+		dec byte [habilitadas]
+		jmp 24<<3:0
+		popad
+		iret
 
 
 
@@ -273,7 +288,7 @@ sched:
 		je .siguienteBandera
 		
 		call sched_bandera_actual
-		;xchg bx, bx
+		xchg bx, bx
 		push ax
 		dec byte [habilitadas]
 		mov edi, 20
