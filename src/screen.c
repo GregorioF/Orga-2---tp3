@@ -21,7 +21,7 @@ ca flags[8][5][10];
 int posicionTareas [8][3];
 char paginasTareas [8][4][8];
 int ultimoMisil = -1;
-char prueba[8][79];
+char fondo[80];
 int ultimoError = -1;
 int ultimoNavio = -1;
 static const char navio[6] = {"NAVIO "}; 
@@ -63,36 +63,34 @@ void printearError(short n,unsigned int error){
 	mostrar_mapa();
 }
 
-void inicializar_prueba(){
-	int i = 0;
+void inicializar_fondo(){
 	int j = 0;
-	for (i = 0; i < 8; i++){
-		for (j = 0; j < 79; j++){
-			prueba[i][j] = 0;
-		}
-		prueba[i][3] = 'P';
-		prueba[i][4] = '1';
-		prueba[i][5] = ':';
-		for (j=6; j  < 16; j++){
-			prueba[i][j] = '0';
-		}
-		prueba[i][7] = 'x';
-		
-		prueba[i][17] = 'P';
-		prueba[i][18] = '2';
-		prueba[i][19] = ':';
-		for (j=20; j  < 30; j++){
-			prueba[i][j] = '0';
-		}
-		prueba[i][21] = 'x';
-		prueba[i][31] = 'P';
-		prueba[i][32] = '3';
-		prueba[i][33] = ':';
-		for (j=34; j  < 44; j++){
-			prueba[i][j] = '0';
-		}
-		prueba[i][35] = 'x';
+	for (j = 0; j < 80; j++){
+		fondo[j] = 0;
 	}
+	fondo[3] = 'P';
+	fondo[4] = '1';
+	fondo[5] = ':';
+	for (j=6; j  < 16; j++){
+		fondo[j] = '0';
+	}
+	fondo[7] = 'x';
+		
+	fondo[17] = 'P';
+	fondo[18] = '2';
+	fondo[19] = ':';
+	for (j=20; j  < 30; j++){
+		fondo[j] = '0';
+	}
+	fondo[21] = 'x';
+	fondo[31] = 'P';
+	fondo[32] = '3';
+	fondo[33] = ':';
+	for (j=34; j  < 44; j++){
+		fondo[j] = '0';
+	}
+	fondo[35] = 'x';
+	
 }
 
 void inicializar_flags(){
@@ -114,16 +112,6 @@ void borrarDelMapa(unsigned int n){
 	posicionTareas[n][2] = -1;
 }
 
-/*
-void arregloChar(char pagina[], unsigned int n){
-	unsigned int i = 0;
-	pagina[0] = '0';
-	pagina[1] = 'x';
-	for (i = 2; i < 10; i++){
-		pagina[i] = ;
-	}
-}
-*/
 void inicializar_mapa(){
 	int i = 0;
 	for(i = 0; i < 8; i++){
@@ -247,8 +235,10 @@ void actualizar_mapa(unsigned int n, unsigned int m, unsigned int movimiento, un
 			if(posicionTareas[current][0] != -1){
 				posicionTareas[current][3] = (n/4096);
 				int i = 0;
+				int k = 7;
 				for (i=0; i < 8; i++){
-					paginasTareas[current][2][i] = devolver_hex(n,i);
+					paginasTareas[current][2][i] = devolver_hex(n,k);
+					k-=1;
 				}
 			}
 		}
@@ -258,9 +248,11 @@ void actualizar_mapa(unsigned int n, unsigned int m, unsigned int movimiento, un
 				posicionTareas[current][0] = (n/4096);
 				posicionTareas[current][1] = (m/4096);	
 				int i = 0;
+				int k = 7;
 				for (i=0; i < 8; i++){
-					paginasTareas[current][0][i] = devolver_hex(n,i);
-					paginasTareas[current][1][i] = devolver_hex(m,i);
+					paginasTareas[current][0][i] = devolver_hex(n,k);
+					paginasTareas[current][1][i] = devolver_hex(m,k);
+					k-=1;
 				}
 			}
 		}
@@ -272,23 +264,6 @@ void actualizar_mapa(unsigned int n, unsigned int m, unsigned int movimiento, un
 		mostrar_mapa();
 }
 
-void imprimir_texto(char* palabra, int n, int currFila, int currCol ){
-	
-	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
-	
-	int i = currCol;
-	for( i = currCol; i < n+currCol ; i ++ ){
-		ca temp = {.c = palabra[i-currCol], .a = C_BG_BLACK  | C_FG_WHITE};
-		p[currFila][i] = temp;
-	}
-		
-}
-
-void imprimir_nombre_del_grupo(){
-	char* c = "El Arquitecto";
-	imprimir_texto( c, 13, 0 ,  1);
-		
-}
 
 void imprimir_banderitas(){
 	
@@ -359,7 +334,7 @@ void imprimir_banderitas(){
 			ca temp = {.c = debug[19][i-70], .a = C_BG_BLACK | C_FG_WHITE };
 			p[10][i] = temp;
 		}
-		//PONEMOS FRAJNA AZUL SOBRE LA SECCION DE ERROR
+		//PONEMOS FRANJA AZUL SOBRE LA SECCION DE ERROR
 		
 		int aux = 1;
 		for (i = 50; i < 79; i++){
@@ -389,7 +364,7 @@ void imprimir_banderitas(){
 		//ARMAMOS LA SECCION DE ESTADOS
 		for (i = 2; i < 79; i++){
 			for (j = 16; j < 24; j++){
-				ca temp = {.c = prueba[j-16][i], .a = C_BG_CYAN | C_FG_BLACK };
+				ca temp = {.c = fondo[i], .a = C_BG_CYAN | C_FG_BLACK };
 				if (paginasTareas[j-16][3][0] != 0){
 					temp.a = C_BG_BROWN | C_FG_BLACK;
 				}
@@ -494,6 +469,17 @@ void imprimir_banderitas(){
 }
 	
 
+void imprimir_texto(char* palabra, int n, int currFila, int currCol ){
+	
+	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+	
+	int i = currCol;
+	for( i = currCol; i < n+currCol ; i ++ ){
+		ca temp = {.c = palabra[i-currCol], .a = C_BG_BLACK  | C_FG_WHITE};
+		p[currFila][i] = temp;
+	}
+		
+}
 
 void printear(unsigned int x){
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
@@ -575,6 +561,11 @@ void print_int(unsigned int n, unsigned int x, unsigned int y, unsigned short at
     }
     p[y][x].c = '0'+n;
     p[y][x].a = attr;
+}
+
+void imprimir_nombre_del_grupo(){
+	char* c = "El Arquitecto";
+	imprimir_texto( c, 13, 0 ,  1);		
 }
 
 

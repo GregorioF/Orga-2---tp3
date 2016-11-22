@@ -57,7 +57,7 @@ _isr%1:
 	dec byte [habilitadas]
 	mov edi, %1;
 	push edi
-	xchg bx, bx
+	;xchg bx, bx
 	call inhabilitar_tarea
 	call imprimir_banderitas
 	.sigueHabiendo:

@@ -27,7 +27,7 @@ extern limpiar_pantalla
 extern tss_inicializar
 extern inicializar_mapa
 extern inicializar_flags
-extern inicializar_prueba
+extern inicializar_fondo
 ;; Saltear seccion de datos
 jmp start
 
@@ -120,7 +120,7 @@ BITS 32
 	call imprimir_nombre_del_grupo
 	
 	call inicializar_mapa
-	call inicializar_prueba
+	call inicializar_fondo
 
 
     ; inicializar tarea idle     ; inicializar todas las tss    ; inicializar entradas de la gdt de las tsss
@@ -150,7 +150,7 @@ BITS 32
     mov ax, 23 << 3 
 
 	ltr ax
-	;xchg bx, bx
+	xchg bx, bx
 	jmp 24<< 3:0
 	
 	
