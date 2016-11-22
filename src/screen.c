@@ -15,6 +15,7 @@ static const char* a []= {
 "Stack-Segment Fault", "General Protection", "Page Fault", "RESERVED", "Floating-Point Error", "Alignment Check", "Machine Check", "SIMD Floating-Point Exception"
 };
 
+int mapa = 0;
 ca flags[8][5][10];
 int posicionTareas [8][3];
 int paginasTareas [8][4];
@@ -29,6 +30,8 @@ void printearError(short n,unsigned int error){
 	paginasTareas[n][3] = error;
 	ultimoError = error;
 	ultimoNavio = n;
+	imprimir_banderitas();
+	mostrar_mapa();
 }
 
 void inicializar_prueba(){
@@ -115,73 +118,81 @@ char tabla_traduccion (int eax) {
 }
 
 void mostrar_mapa(){
-	int i = 0;
 	
-	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
-	int fil = 0;
-	int col = 0;
-	for ( fil = 0; fil < 25; fil++ ){
-		for ( col = 0; col < 80 ; col++){
-			ca mar = {.c = 0, .a = C_BG_BLUE  | C_FG_WHITE};
-			p[fil][col] = mar;
-			if ((fil*VIDEO_COLS) + col < 256 ){
-					ca tierra = {.c = 0, .a = C_BG_GREEN  | C_FG_WHITE};
-					p[fil][col] = tierra;
-			}
-		}
-	}
-	ca reloj_idle = {.c = 0, .a = C_BG_LIGHT_GREY | C_FG_BLACK};
-	p[24][0] = reloj_idle;
-	for (col = 1; col < 80 ; col++){
-		ca borde = {.c = 0, .a = C_BG_BLACK | C_FG_WHITE};
-		p[24][col] = borde;
-	}
-	
-	for (i=0; i<8; i++){				
-		int j = 0;
-		for (j=0; j<3; j++){
-			
-			int n = posicionTareas[i][j];
-			if (n != -1){
-							
-				col = n;
-				fil = 0;
-				while ( col >= VIDEO_COLS ){
-						col = col - VIDEO_COLS;
-						fil = fil + 1;
-				}
-				
-				if (p[fil][col].c != 0){
-					ca tareas = {.c = 'x' , .a = C_BG_RED  | C_FG_WHITE};
-					p[fil][col] = tareas;
-				}
-				else{
-					ca tareas = {.c = i+49 , .a = C_BG_BROWN  | C_FG_WHITE};
-					p[fil][col] = tareas;
+	if(mapa){
+		int i = 0;
+		
+		ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+		int fil = 0;
+		int col = 0;
+		for ( fil = 0; fil < 25; fil++ ){
+			for ( col = 0; col < 80 ; col++){
+				ca mar = {.c = 0, .a = C_BG_BLUE  | C_FG_WHITE};
+				p[fil][col] = mar;
+				if ((fil*VIDEO_COLS) + col < 256 ){
+						ca tierra = {.c = 0, .a = C_BG_GREEN  | C_FG_WHITE};
+						p[fil][col] = tierra;
 				}
 			}
 		}
-	}
-	
-	if ( ultimoMisil != -1 ){
-		fil = 0;
-		col = ultimoMisil;
-		while ( col >= VIDEO_COLS ){
-					col = col - VIDEO_COLS;
-					fil = fil + 1;
+		ca reloj_idle = {.c = 0, .a = C_BG_LIGHT_GREY | C_FG_BLACK};
+		p[24][0] = reloj_idle;
+		for (col = 1; col < 80 ; col++){
+			ca borde = {.c = 0, .a = C_BG_BLACK | C_FG_WHITE};
+			p[24][col] = borde;
 		}
 		
-		ca misil = {.c = 0 , .a = C_BG_CYAN  | C_FG_WHITE};
-		p[fil][col] = misil;
+		for (i=0; i<8; i++){				
+			int j = 0;
+			for (j=0; j<3; j++){
+				
+				int n = posicionTareas[i][j];
+				if (n != -1){
+								
+					col = n;
+					fil = 0;
+					while ( col >= VIDEO_COLS ){
+							col = col - VIDEO_COLS;
+							fil = fil + 1;
+					}
+					
+					if (p[fil][col].c != 0){
+						ca tareas = {.c = 'x' , .a = C_BG_RED  | C_FG_WHITE};
+						p[fil][col] = tareas;
+					}
+					else{
+						ca tareas = {.c = i+49 , .a = C_BG_BROWN  | C_FG_WHITE};
+						p[fil][col] = tareas;
+					}
+				}
+			}
+		}
+		
+		if ( ultimoMisil != -1 ){
+			fil = 0;
+			col = ultimoMisil;
+			while ( col >= VIDEO_COLS ){
+						col = col - VIDEO_COLS;
+						fil = fil + 1;
+			}
+			
+			ca misil = {.c = 0 , .a = C_BG_CYAN  | C_FG_WHITE};
+			p[fil][col] = misil;
+		}
 	}
 		 
 }
 
 void print_numerito(int eax){
-	if (eax == 0x12) imprimir_banderitas();
+	if (eax == 0x12){
+		mapa = 0;
+		imprimir_banderitas();
+	}
 	else{
 		if(eax == 0x32){
+			mapa = 1;
 			mostrar_mapa();
+			
 		}
 		else{ 
 			char numerito = tabla_traduccion(eax);
@@ -214,6 +225,7 @@ void actualizar_mapa(unsigned int n, unsigned int m, unsigned int movimiento, un
 			ultimoMisil = (n/4096);
 		}
 		
+		mostrar_mapa();
 }
 
 void imprimir_texto(char* palabra, int n, int currFila, int currCol ){
@@ -236,150 +248,152 @@ void imprimir_nombre_del_grupo(){
 
 void imprimir_banderitas(){
 	
-	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
-	unsigned int i;
+	if(mapa==0){
+	
+		ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+		unsigned int i;
 
 
-	//IMPRIMIMOS FONDO
-	unsigned int j;
-	for (i = 0; i < VIDEO_FILS; i++){
-			for (j = 0; j < VIDEO_COLS; j++){
-					ca temp = {.c = 0, .a = C_BG_LIGHT_GREY  | C_FG_BLACK};
+		//IMPRIMIMOS FONDO
+		unsigned int j;
+		for (i = 0; i < VIDEO_FILS; i++){
+				for (j = 0; j < VIDEO_COLS; j++){
+						ca temp = {.c = 0, .a = C_BG_LIGHT_GREY  | C_FG_BLACK};
+						p[i][j] = temp;
+				}
+		}
+
+
+		//IMPRIMIMOS EN LA PRIMER LINEA EL NOMBRE DEL GRUPO
+		char* nombreGrupo = "El Arquitecto";
+		int r = 0;
+		for (i = 0; i < VIDEO_COLS; i++) {
+			if( r < 13){ 
+				ca temp = {.c = nombreGrupo[r], .a = C_BG_BLACK | C_FG_WHITE };
+				r++;
+				p[0][i] = temp;
+			}else{ 
+				ca temp = {.c = ' ', .a = C_BG_BLACK | C_FG_WHITE };
+				p[0][i] = temp;
+			}
+		}
+		
+
+		//ARMAMOS SECCION DE ULTIMO ERROR 
+		for (i = 2; i < 15; i++){
+				for(j = 50; j < 79; j++){
+					ca temp = {.c = 0, .a = C_BG_BLACK | C_FG_WHITE };
 					p[i][j] = temp;
-			}
-	}
-
-
-	//IMPRIMIMOS EN LA PRIMER LINEA EL NOMBRE DEL GRUPO
-	char* nombreGrupo = "El Arquitecto";
-	int r = 0;
-	for (i = 0; i < VIDEO_COLS; i++) {
-		if( r < 13){ 
-			ca temp = {.c = nombreGrupo[r], .a = C_BG_BLACK | C_FG_WHITE };
-			r++;
-			p[0][i] = temp;
-		}else{ 
-			ca temp = {.c = ' ', .a = C_BG_BLACK | C_FG_WHITE };
-			p[0][i] = temp;
+				}
 		}
-	}
-	
-
-	//ARMAMOS SECCION DE ULTIMO ERROR 
-	for (i = 2; i < 15; i++){
-			for(j = 50; j < 79; j++){
+		//PONEMOS FRAJNA AZUL SOBRE LA SECCION DE ERROR
+		
+		int aux = 1;
+		for (i = 50; i < 79; i++){
+				ca temp = {.c = 0, .a = C_BG_CYAN | C_FG_BLACK};
+				if (ultimoError != -1){
+					
+					if ( aux && ultimoError != 20){
+						aux = a[ultimoError][i-50] != 0;
+					}
+					if (aux && ultimoError != 20){
+						temp.c = a[ultimoError][i-50];
+					}
+					if (ultimoError == 20){
+						temp.c = bandera[i-50];
+					}
+					
+					if ( 71 < i &&  i < 77){
+						temp.c = navio[i-72];
+					}
+					if ( i == 78 ){
+						temp.c = ultimoNavio + 49;
+					}
+				}
+				p[1][i] = temp;
+		}
+		
+		//ARMAMOS LA SECCION DE ESTADOS
+		for (i = 2; i < 79; i++){
+			for (j = 16; j < 24; j++){
+				ca temp = {.c = prueba[j-16][i], .a = C_BG_CYAN | C_FG_BLACK };
+				if (paginasTareas[j-16][3] != -1){
+					temp.a = C_BG_BROWN | C_FG_BLACK;
+				}
+				p[j][i] = temp;
+			}
+		}
+		//PONEMOS LA ULTIMA LINEA EN NEGRO 
+		for (i = 0; i < VIDEO_COLS; i++){
 				ca temp = {.c = 0, .a = C_BG_BLACK | C_FG_WHITE };
-				p[i][j] = temp;
+				p[24][i] = temp;
+		}
+		//BORDE IZQUIERDO DE SECCION ESTADOS
+		
+		for (i = 16; i < 24; i++){
+			ca temp = {.c = (i-15)+'0', .a = C_BG_LIGHT_GREY | C_FG_BLACK };
+			p[i][1] = temp;
+			ca temp2 = {.c = 0, .a = C_BG_BLACK | C_FG_WHITE  };
+			p[i][0]= temp2;
+			p[i][79]= temp2;
+		}
+		
+		for (i = 0; i < 10 ; i ++){
+			for (j = 0; j < 5; j++){
+				ca temp = flags[0][j][i];
+				p[j+3][i+2] = temp;
 			}
-	}
-	//PONEMOS FRAJNA AZUL SOBRE LA SECCION DE ERROR
-	
-	int aux = 1;
-	for (i = 50; i < 79; i++){
-			ca temp = {.c = 0, .a = C_BG_CYAN | C_FG_BLACK};
-			if (ultimoError != -1){
-				
-				if ( aux && ultimoError != 20){
-					aux = a[ultimoError][i-50] != 0;
-				}
-				if (aux && ultimoError != 20){
-					temp.c = a[ultimoError][i-50];
-				}
-				if (ultimoError == 20){
-					temp.c = bandera[i-50];
-				}
-				
-				if ( 71 < i &&  i < 77){
-					temp.c = navio[i-72];
-				}
-				if ( i == 78 ){
-					temp.c = ultimoNavio + 49;
-				}
+		}
+		
+		for (i = 0; i < 10 ; i ++){
+			for (j = 0; j < 5; j++){
+				ca temp = flags[1][j][i];
+				p[j+3][i+14] = temp;
 			}
-			p[1][i] = temp;
-	}
-	
-	//ARMAMOS LA SECCION DE ESTADOS
-	for (i = 2; i < 79; i++){
-		for (j = 16; j < 24; j++){
-			ca temp = {.c = prueba[j-16][i], .a = C_BG_CYAN | C_FG_BLACK };
-			if (paginasTareas[j-16][3] != -1){
-				temp.a = C_BG_BROWN | C_FG_BLACK;
+		}
+		
+		for (i = 0; i < 10 ; i ++){
+			for (j = 0; j < 5; j++){
+				ca temp = flags[2][j][i];
+				p[j+3][i+26] = temp;
 			}
-			p[j][i] = temp;
+		}
+		
+		for (i = 0; i < 10 ; i ++){
+			for (j = 0; j < 5; j++){
+				ca temp = flags[3][j][i];
+				p[j+3][i+38] = temp;
+			}
+		}
+		
+		for (i = 0; i < 10 ; i ++){
+			for (j = 0; j < 5; j++){
+				ca temp = flags[4][j][i];
+				p[j+10][i+2] = temp;
+			}
+		}
+		
+		for (i = 0; i < 10 ; i ++){
+			for (j = 0; j < 5; j++){
+				ca temp = flags[5][j][i];
+				p[j+10][i+14] = temp;
+			}
+		}
+		
+		
+		for (i = 0; i < 10 ; i ++){
+			for (j = 0; j < 5; j++){
+				ca temp = flags[6][j][i];
+				p[j+10][i+26] = temp;
+			}
+		}
+		for (i = 0; i < 10 ; i ++){
+			for (j = 0; j < 5; j++){
+				ca temp = flags[7][j][i];
+				p[j+10][i+38] = temp;
+			}
 		}
 	}
-	//PONEMOS LA ULTIMA LINEA EN NEGRO 
-	for (i = 0; i < VIDEO_COLS; i++){
-			ca temp = {.c = 0, .a = C_BG_BLACK | C_FG_WHITE };
-			p[24][i] = temp;
-	}
-	//BORDE IZQUIERDO DE SECCION ESTADOS
-	
-	for (i = 16; i < 24; i++){
-		ca temp = {.c = (i-15)+'0', .a = C_BG_LIGHT_GREY | C_FG_BLACK };
-		p[i][1] = temp;
-		ca temp2 = {.c = 0, .a = C_BG_BLACK | C_FG_WHITE  };
-		p[i][0]= temp2;
-		p[i][79]= temp2;
-	}
-	
-	for (i = 0; i < 10 ; i ++){
-		for (j = 0; j < 5; j++){
-			ca temp = flags[0][j][i];
-			p[j+3][i+2] = temp;
-		}
-	}
-	
-	for (i = 0; i < 10 ; i ++){
-		for (j = 0; j < 5; j++){
-			ca temp = flags[1][j][i];
-			p[j+3][i+14] = temp;
-		}
-	}
-	
-	for (i = 0; i < 10 ; i ++){
-		for (j = 0; j < 5; j++){
-			ca temp = flags[2][j][i];
-			p[j+3][i+26] = temp;
-		}
-	}
-	
-	for (i = 0; i < 10 ; i ++){
-		for (j = 0; j < 5; j++){
-			ca temp = flags[3][j][i];
-			p[j+3][i+38] = temp;
-		}
-	}
-	
-	for (i = 0; i < 10 ; i ++){
-		for (j = 0; j < 5; j++){
-			ca temp = flags[4][j][i];
-			p[j+10][i+2] = temp;
-		}
-	}
-	
-	for (i = 0; i < 10 ; i ++){
-		for (j = 0; j < 5; j++){
-			ca temp = flags[5][j][i];
-			p[j+10][i+14] = temp;
-		}
-	}
-	
-	
-	for (i = 0; i < 10 ; i ++){
-		for (j = 0; j < 5; j++){
-			ca temp = flags[6][j][i];
-			p[j+10][i+26] = temp;
-		}
-	}
-	for (i = 0; i < 10 ; i ++){
-		for (j = 0; j < 5; j++){
-			ca temp = flags[7][j][i];
-			p[j+10][i+38] = temp;
-		}
-	}
-
 }
 	
 
