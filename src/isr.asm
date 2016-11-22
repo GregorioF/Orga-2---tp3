@@ -234,7 +234,7 @@ _isr80:
 	add esp, 16
 			
 	.fin:
-	xchg bx,bx
+	;xchg bx,bx
 	jmp 24<<3:0
 	
     popad
@@ -333,7 +333,7 @@ sched:
 		je .siguienteBandera
 		
 		call sched_bandera_actual
-		xchg bx, bx
+		;xchg bx, bx
 		push ax
 		dec byte [habilitadas]
 		mov edi, 20
@@ -366,7 +366,7 @@ sched:
 		.siguienteBandera:
 		mov word [pasePorSys],0
 		call sched_proxima_bandera
-		xchg bx,bx
+		;xchg bx,bx
 		mov cx, ax
 		cmp cx, -1
 		je .finEjecutarBanderas
@@ -393,7 +393,7 @@ sched:
     .ejecutoSigTarea:
     cmp word [habilitadas],0
     je .fin
-	xchg bx, bx
+	;xchg bx, bx
     inc DWORD [reloj_numero]
     mov ebx, [reloj_numero]
     cmp ebx, 0x3
@@ -417,11 +417,17 @@ sched:
 		call sched_proximo_indice
 		;xchg bx, bx
 		cmp cx, ax
-		je .fin
+		jne .saltar
+		
+		mov ebx, cr3
+		cmp ebx, 0x27000
+		jne .fin
+		
+		.saltar:
         add ax, 25
         shl ax, 3
         mov [selector], ax
         jmp far [offset]
                 
     .fin: 
-		ret
+		ret 
