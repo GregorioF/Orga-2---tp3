@@ -43,6 +43,7 @@ _isr%1:
 	cmp word [ejecutandoBanderas],0
 	je .deshabilitarTarea
 	call sched_bandera_actual
+	mov word [caiError], 1
 	jmp .sigo
 	
 	.deshabilitarTarea:
@@ -57,6 +58,7 @@ _isr%1:
 	mov edi, %1;
 	push edi
 	call inhabilitar_tarea
+	call imprimir_banderitas
 	.sigueHabiendo:
 	add esp, 8	
 	jmp 24<<3:0
@@ -89,7 +91,8 @@ offset:  				dd 0x00000000
 selector:				dw 0x00000000
 habilitadas:			dw 0x00000008
 ejecutandoBanderas: 	dw 0x0
-pasePorSys: 			dw 0x0
+pasePorSys: 			dw 0x1
+caiError:				dw 0x0
 
 ;;
 ;; Rutina de atención de las EXCEPCIONES
@@ -257,16 +260,16 @@ proximo_reloj:
 sched:
     ;xchg bx, bx
     
-    cmp word [habilitadas],0
-    je .fin
-  
-	cmp word [ejecutandoBanderas], 1
+    cmp word [ejecutandoBanderas], 1
     jne  .ejecutoSigTarea
     jmp .ejecutarBanderas
     
     
     .ejecutarBanderas:
+		
 		cmp word [pasePorSys],1
+		je .siguienteBandera
+		cmp word [caiError],1
 		je .siguienteBandera
 		
 		call sched_bandera_actual
@@ -282,18 +285,18 @@ sched:
 		.siguienteBandera:
 		mov word [pasePorSys],0
 		call sched_proxima_bandera
+		;xchg bx,bx
 		mov cx, ax
 		cmp cx, -1
 		je .finEjecutarBanderas
 		
-		push eax
-		call imprimir_banderitas
-		pop eax
 		add ax, 33
 		shl ax, 3
 		mov [selector], ax
 		jmp far [offset] 
 		
+		call imprimir_banderitas
+		;xchg bx, bx
 		jmp .fin 
 		
 		.finEjecutarBanderas:
@@ -307,6 +310,8 @@ sched:
     
     
     .ejecutoSigTarea:
+    cmp word [habilitadas],0
+    je .fin
 	;xchg bx, bx
     inc DWORD [reloj_numero]
     mov ebx, [reloj_numero]
@@ -322,7 +327,7 @@ sched:
 		jmp .ejecutarBanderas
 			
     .ok:
-		call tareas_arreglo  ; - esto apra debuguear que iban eliminando las tareas adecuadamente
+		;call tareas_arreglo  ; - esto apra debuguear que iban eliminando las tareas adecuadamente
 		;xchg bx, bx
 		;mov edx, ejecutandoBanderas ;  -- lo mismo
 	    ;xchg bx, bx

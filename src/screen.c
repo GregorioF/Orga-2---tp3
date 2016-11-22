@@ -274,14 +274,18 @@ void imprimir_banderitas(){
 	}
 	//PONEMOS FRAJNA AZUL SOBRE LA SECCION DE ERROR
 	
+	int aux = 1;
 	for (i = 50; i < 79; i++){
 			ca temp = {.c = 0, .a = C_BG_CYAN | C_FG_BLACK};
 			if (ultimoError != -1){
 				
-				if ( (i-50) < 1 && ultimoError != 20){
+				if ( aux && ultimoError != 20){
+					aux = a[ultimoError][i-50] != 0;
+				}
+				if (aux && ultimoError != 20){
 					temp.c = a[ultimoError][i-50];
 				}
-				else{
+				if (ultimoError == 20){
 					temp.c = bandera[i-50];
 				}
 				

@@ -17,42 +17,50 @@ void sched_inicializar() {
 }
 
 void inhabilitar_tarea(unsigned int error ,short n){
-	if (n != -1 && tareas[n]!= 0 && banderas[n]!= 0){
-		tareas[n]=0;
+	if (0 <= n){
 		banderas[n]=0;
+		tareas[n]=0;
 		borrarDelMapa(n);
 		printearError(n,error);
 	}
 }
 short sched_proximo_indice() {
-	current +=1 ;
-	int i = 0;
-	while(tareas[current%8] == 0 && i < 20){
-		current +=1;
-		i = i+1;
+	if (current < 7){
+		current +=1 ;
 	}
-	if(i == 20) return -1;
-	return current %8;
+	else{
+		current = 0;
+	}
+	
+	while(tareas[current%8] == 0){
+		current +=1;
+		if(16 <= current){
+			current = -1;
+			return current;
+		}
+	}
+	current = current%8;
+	return current;
 }
 
 short sched_indice_actual(){
-	if ( 7 < current ){
-		current = current%8;
-	};
-	return current 	;
+	return current;
 }
 short sched_proxima_bandera(){
+	if (currentBanderas == 7){
+		currentBanderas = -1;
+		return currentBanderas;
+	}
 	currentBanderas +=1;
-
-	while(tareas[currentBanderas] == 0 ){
+	
+	while(tareas[currentBanderas%8] == 0 ){
 		currentBanderas +=1;
-		if(currentBanderas == 8) {
+		if(8 == currentBanderas) {
 			currentBanderas = -1;
-			break;
+			return currentBanderas;
 		}
 	}
-	if( 7 < currentBanderas ) currentBanderas = -1;
-	return currentBanderas;
+	return currentBanderas%8;
 }
 
 int* tareas_arreglo (){
