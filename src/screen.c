@@ -33,8 +33,8 @@ void inicializar_flags(){
 }
 void borrarDelMapa(unsigned int n){
 	posicionTareas[n][0] = -1;
-	posicionTareas[n][0] = -1;
-	posicionTareas[n][0] = -1;
+	posicionTareas[n][1] = -1;
+	posicionTareas[n][2] = -1;
 }
 
 void inicializar_mapa(){
