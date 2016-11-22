@@ -54,6 +54,8 @@ _isr%1:
 	je .sigueHabiendo
 	dec byte [habilitadas]
 	;xchg bx,bx
+	mov edi, %1;
+	push edi
 	call inhabilitar_tarea
 	.sigueHabiendo:
 	pop ax	

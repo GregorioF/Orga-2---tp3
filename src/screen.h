@@ -21,7 +21,7 @@ typedef struct ca_s {
     unsigned char c;
     unsigned char a;
 } ca;
-
+void printearError(short n,unsigned int error);
 void printear(unsigned int);
 void print(const char * text, unsigned int x, unsigned int y, unsigned short attr);
 

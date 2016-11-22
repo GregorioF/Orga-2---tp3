@@ -16,7 +16,45 @@ static const char* a []= {
 
 ca flags[8][5][10];
 int posicionTareas [8][3];
+int paginasTareas [8][4];
 int ultimoMisil = -1;
+char prueba[8][79];
+
+void printearError(short n,unsigned int error){
+	paginasTareas[n][3] = error;
+}
+
+void inicializar_prueba(){
+	int i = 0;
+	int j = 0;
+	for (i = 0; i < 8; i++){
+		for (j = 0; j < 79; j++){
+			prueba[i][j] = 0;
+		}
+		prueba[i][3] = 'P';
+		prueba[i][4] = '1';
+		prueba[i][5] = ':';
+		for (j=6; j  < 16; j++){
+			prueba[i][j] = '0';
+		}
+		prueba[i][7] = 'x';
+		
+		prueba[i][17] = 'P';
+		prueba[i][18] = '2';
+		prueba[i][19] = ':';
+		for (j=20; j  < 30; j++){
+			prueba[i][j] = '0';
+		}
+		prueba[i][21] = 'x';
+		prueba[i][31] = 'P';
+		prueba[i][32] = '3';
+		prueba[i][33] = ':';
+		for (j=34; j  < 44; j++){
+			prueba[i][j] = '0';
+		}
+		prueba[i][35] = 'x';
+	}
+}
 
 void inicializar_flags(){
 	int i = 0;
@@ -37,12 +75,26 @@ void borrarDelMapa(unsigned int n){
 	posicionTareas[n][2] = -1;
 }
 
+/*
+void arregloChar(char pagina[], unsigned int n){
+	unsigned int i = 0;
+	pagina[0] = '0';
+	pagina[1] = 'x';
+	for (i = 2; i < 10; i++){
+		pagina[i] = ;
+	}
+}
+*/
 void inicializar_mapa(){
 	int i = 0;
 	for(i = 0; i < 8; i++){
 		posicionTareas[i][0] = (1048576 + (8192)*i)/4096;
 		posicionTareas[i][1] = (1052672 + (8192)*i)/4096;
-		posicionTareas[i][2] = 0;
+		posicionTareas[i][2] = 0;		
+		paginasTareas[i][0] = (0x100000 + (0x2000)*i);
+		paginasTareas[i][1] = (0x101000 + (0x2000)*i);
+		paginasTareas[i][2] = 0;
+		paginasTareas[i][3] = -1;
 	}
 }
 
@@ -115,7 +167,6 @@ void mostrar_mapa(){
 		ca misil = {.c = 0 , .a = C_BG_CYAN  | C_FG_WHITE};
 		p[fil][col] = misil;
 	}
-
 		 
 }
 
@@ -220,18 +271,14 @@ void imprimir_banderitas(){
 			p[1][i] = temp;
 	}
 	
-
-	//PONEMOS FRANJA NARANJA SOBRE LA SECCION  DE ESTADOS
-	for (i = 2; i < 79; i++){
-			ca temp = {.c = 0, .a = C_BG_BROWN| C_FG_WHITE};
-			p[16][i] = temp;
-	}
-	
 	//ARMAMOS LA SECCION DE ESTADOS
 	for (i = 2; i < 79; i++){
-		for (j = 17; j < 24; j++){
-			ca temp = {.c = 0, .a = C_BG_CYAN | C_FG_BLACK };
-				p[j][i] = temp;
+		for (j = 16; j < 24; j++){
+			ca temp = {.c = prueba[j-16][i], .a = C_BG_CYAN | C_FG_BLACK };
+			if (paginasTareas[j-16][3] != -1){
+				temp.a = C_BG_BROWN | C_FG_BLACK;
+			}
+			p[j][i] = temp;
 		}
 	}
 	//PONEMOS LA ULTIMA LINEA EN NEGRO 

@@ -16,11 +16,12 @@ int currentBanderas = -1;
 void sched_inicializar() {
 }
 
-void inhabilitar_tarea(short n){
+void inhabilitar_tarea(unsigned int error ,short n){
 	if (n != -1){
 		tareas[n]=0;
 		banderas[n]=0;
 		borrarDelMapa(n);
+		printearError(n,error);
 	}
 }
 short sched_proximo_indice() {

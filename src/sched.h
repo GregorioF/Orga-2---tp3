@@ -11,7 +11,7 @@
 
 void sched_inicializar();
 short sched_proximo_indice();
-void inhabilitar_tarea(short n);
+void inhabilitar_tarea(unsigned int error, short n);
 short sched_indice_actual();
 void borrarDelMapa(unsigned int n);
 
