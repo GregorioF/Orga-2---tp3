@@ -173,19 +173,12 @@ _isr80:
     mov eax, cr3
     push eax
     push ebx 
+    call sched_indice_actual
+    push eax
     call game_fondear
-   ; call sched_indice_actual
-    pop ebx
-    add esp, 4 ;para eliminar el eax pusheado antes
-    ;eax = current
-   ; push eax ; de derecha a izquierda
-   ; mov ecx, 0
-   ; push ecx
-   ; sub esp, 4 ; el lugar del m
-   ; push ebx ;en ebx esta la direccion a donde movi mi ancla 
-   ; call actualizar_mapa
-   ; add esp, 16
     
+    add esp, 12 ;para eliminar los 3 push
+   
 	jmp .fin
     
     .misil:
@@ -193,18 +186,11 @@ _isr80:
     jne .navegar 
     push ecx
     push ebx    
+    call sched_indice_actual
+    push eax
     call game_canonear    
- ;   call sched_indice_actual
-    pop ebx
-    add esp, 4
+    add esp, 12
     
-  ;  push ax ; indice actual
-   ; mov edx, 2
-  ;  push edx ;movimiento
-  ;  push ecx ;basura
-  ;  push ebx ;direccion a donde disparo
-;	call actualizar_mapa
-;	add esp, 16       
     jmp .fin
     
 	.navegar:
@@ -214,18 +200,10 @@ _isr80:
 	push ebx
 	mov eax, cr3
 	push eax	
+	call sched_indice_actual
+	push eax
 	call game_navegar
-	pop eax
-;	call sched_indice_actual
-	pop ebx
-	pop ecx
-;	push ax ; indice actual
-;	mov edx, 1
-;	push edx
-;	push ecx
-;	push ebx
-;	call actualizar_mapa
-;	add esp, 16
+	add esp, 16
 			
 	
 	.fin:
@@ -275,7 +253,7 @@ proximo_reloj:
     ret
     
 sched:
-    xchg bx, bx
+    ;xchg bx, bx
     
     cmp word [habilitadas],0
     je .fin
@@ -290,7 +268,7 @@ sched:
 		je .siguienteBandera
 		
 		call sched_bandera_actual
-		xchg bx, bx
+		;xchg bx, bx
 		push ax
 		dec byte [habilitadas]
 		call inhabilitar_tarea

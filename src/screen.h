@@ -34,5 +34,6 @@ void imprimir_texto(char* c,  int a , int b ,int d);
 void imprimir_nombre_del_grupo();
 
 void screen_pintar_pantalla();
+void actualizar_mapa(unsigned int n, unsigned int m, unsigned int movimiento, unsigned int current);
 
 #endif  /* !__SCREEN_H__ */
