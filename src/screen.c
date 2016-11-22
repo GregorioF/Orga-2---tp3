@@ -248,7 +248,7 @@ void actualizar_mapa(unsigned int n, unsigned int m, unsigned int movimiento, un
 				posicionTareas[current][3] = (n/4096);
 				int i = 0;
 				for (i=0; i < 8; i++){
-					paginasTareas[n][2][i] = devolver_hex(n,i);
+					paginasTareas[current][2][i] = devolver_hex(n,i);
 				}
 			}
 		}
@@ -259,8 +259,8 @@ void actualizar_mapa(unsigned int n, unsigned int m, unsigned int movimiento, un
 				posicionTareas[current][1] = (m/4096);	
 				int i = 0;
 				for (i=0; i < 8; i++){
-					paginasTareas[n][0][i] = devolver_hex(n,i);
-					paginasTareas[n][1][i] = devolver_hex(m,i);
+					paginasTareas[current][0][i] = devolver_hex(n,i);
+					paginasTareas[current][1][i] = devolver_hex(m,i);
 				}
 			}
 		}

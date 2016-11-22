@@ -233,8 +233,8 @@ _isr80:
 	call game_navegar
 	add esp, 16
 			
-	;xchg bx,bx
 	.fin:
+	xchg bx,bx
 	jmp 24<<3:0
 	
     popad
@@ -366,7 +366,7 @@ sched:
 		.siguienteBandera:
 		mov word [pasePorSys],0
 		call sched_proxima_bandera
-		;xchg bx,bx
+		xchg bx,bx
 		mov cx, ax
 		cmp cx, -1
 		je .finEjecutarBanderas
@@ -393,7 +393,7 @@ sched:
     .ejecutoSigTarea:
     cmp word [habilitadas],0
     je .fin
-	;xchg bx, bx
+	xchg bx, bx
     inc DWORD [reloj_numero]
     mov ebx, [reloj_numero]
     cmp ebx, 0x3
