@@ -17,7 +17,7 @@ void sched_inicializar() {
 }
 
 void inhabilitar_tarea(unsigned int error ,short n){
-	if (n != -1){
+	if (n != -1 && tareas[n]!= 0 && banderas[n]!= 0){
 		tareas[n]=0;
 		banderas[n]=0;
 		borrarDelMapa(n);

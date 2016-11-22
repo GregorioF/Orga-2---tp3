@@ -58,7 +58,7 @@ _isr%1:
 	push edi
 	call inhabilitar_tarea
 	.sigueHabiendo:
-	pop ax	
+	add esp, 8	
 	jmp 24<<3:0
 	
 	popad
@@ -273,7 +273,10 @@ sched:
 		;xchg bx, bx
 		push ax
 		dec byte [habilitadas]
+		mov edi, 20
+		push edi
 		call inhabilitar_tarea
+		pop edi
 		pop ax
 		
 		.siguienteBandera:

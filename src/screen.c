@@ -10,8 +10,9 @@
 #define BANDERA_BUFFER  0x40001000
 
 static const char* a []= {
-"ERROR 0: DIVIDE ERROR", "ERROR 1: RESERVED", "ERROR 2: NMI Interrupt", "ERROR 3: Breakpoint", "ERROR 4: Overflow", "ERROR 5: BOUND Range Exceeded", "ERROR 6: Invalid Opcode (Undefined Opcode)", 
-"ERROR 7: Device Not Available (No Match Coprocessor)", "ERROR 8: Double Fault", "ERROR 9: Coprocessor Segment Overrun (reserved)", "ERROR 10: Invalid TSS", "ERROR 11: Segment Not Present", "ERROR 12: Stack-Segment Fault", "ERROR 13: General Protection", "ERROR 14: Page Fault", "ERROR 15: (Intel reserved. Do not use.)", "ERROR 16: x87 FPU Floating-Point Error (Math Fault)", "ERROR 17: Alignment Check", "ERROR 18: Machine Check", "ERROR 19: SIMD Floating-Point Exception"
+"DIVIDE ERROR", "RESERVED", "NMI Interrupt", "Breakpoint", "Overflow", "BOUND Range Exceeded", "Invalid Opcode", 
+"Device Not Available", "Double Fault", "Coprocessor Segment Overrun", "Invalid TSS", "Segment Not Present", 
+"Stack-Segment Fault", "General Protection", "Page Fault", "RESERVED", "Floating-Point Error", "Alignment Check", "Machine Check", "SIMD Floating-Point Exception"
 };
 
 ca flags[8][5][10];
@@ -19,9 +20,15 @@ int posicionTareas [8][3];
 int paginasTareas [8][4];
 int ultimoMisil = -1;
 char prueba[8][79];
+int ultimoError = -1;
+int ultimoNavio = -1;
+static const char navio[6] = {"NAVIO "}; 
+static const char bandera[28] = {"ERROR BANDERA               "};
 
 void printearError(short n,unsigned int error){
 	paginasTareas[n][3] = error;
+	ultimoError = error;
+	ultimoNavio = n;
 }
 
 void inicializar_prueba(){
@@ -91,9 +98,9 @@ void inicializar_mapa(){
 		posicionTareas[i][0] = (1048576 + (8192)*i)/4096;
 		posicionTareas[i][1] = (1052672 + (8192)*i)/4096;
 		posicionTareas[i][2] = 0;		
-		paginasTareas[i][0] = (0x100000 + (0x2000)*i);
-		paginasTareas[i][1] = (0x101000 + (0x2000)*i);
-		paginasTareas[i][2] = 0;
+		//paginasTareas[i][0] = (0x100000 + (0x2000)*i);
+		//paginasTareas[i][1] = (0x101000 + (0x2000)*i);
+		//paginasTareas[i][2] = 0;
 		paginasTareas[i][3] = -1;
 	}
 }
@@ -266,8 +273,25 @@ void imprimir_banderitas(){
 			}
 	}
 	//PONEMOS FRAJNA AZUL SOBRE LA SECCION DE ERROR
+	
 	for (i = 50; i < 79; i++){
 			ca temp = {.c = 0, .a = C_BG_CYAN | C_FG_BLACK};
+			if (ultimoError != -1){
+				
+				if ( (i-50) < 1 && ultimoError != 20){
+					temp.c = a[ultimoError][i-50];
+				}
+				else{
+					temp.c = bandera[i-50];
+				}
+				
+				if ( 71 < i &&  i < 77){
+					temp.c = navio[i-72];
+				}
+				if ( i == 78 ){
+					temp.c = ultimoNavio + 49;
+				}
+			}
 			p[1][i] = temp;
 	}
 	
