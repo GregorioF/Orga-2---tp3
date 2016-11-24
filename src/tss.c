@@ -16,6 +16,7 @@ tss tss_navios[CANT_TAREAS];
 tss tss_banderas[CANT_TAREAS];
 
 int dir_tareas []  = {0x31000, 0x32000, 0x33000, 0x34000, 0x35000, 0x36000, 0x37000, 0x38000};
+int pilas_L0_banderas [] = {0x39000, 0x40000, 0x41000, 0x42000, 0x43000, 0x44000, 0x45000, 0x46000};
 void actualizar_gdt(){
 	int i = 0;
 	int j = 0;
@@ -105,6 +106,19 @@ void reiniciar_banderas(){
 	int dosk = 0x2000;
 	for(i = 0; i < 8 ; i ++){
 		tss_banderas[i].eip = *((unsigned int*) (0x11FFC + dosk*i)) + 0x40000000;
+		
+		tss_banderas[i].esp = 0x40001FFC;
+        tss_banderas[i].ebp = 0x40001FFC;
+        tss_banderas[i].eflags = 0x202;
+
+        tss_banderas[i].esp0 = pilas_L0_banderas[i] + 0x1000;
+        tss_banderas[i].ss0 = GDT_DAT_L0 << 3;
+
+        tss_banderas[i].cs = GDT_COD_L3 << 3 | 0x3;
+        tss_banderas[i].ds = GDT_DAT_L3 << 3 | 0x3;
+        tss_banderas[i].ss = GDT_DAT_L3 << 3 | 0x3;
+        tss_banderas[i].cr3 = dir_tareas[i];
+ 
 	}
 }
 
@@ -168,7 +182,7 @@ void tss_inicializar() {
         tss_banderas[i].ebp = 0x40001FFC;
         tss_banderas[i].eflags = 0x202;
 
-        tss_banderas[i].esp0 = nextPage()+ 0x1000;
+        tss_banderas[i].esp0 = pilas_L0_banderas[i] + 0x1000;
         tss_banderas[i].ss0 = GDT_DAT_L0 << 3;
 
         tss_banderas[i].cs = GDT_COD_L3 << 3 | 0x3;

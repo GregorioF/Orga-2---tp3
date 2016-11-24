@@ -15,7 +15,7 @@ int* page_directory = (int*)PAGE_DIRECTORY;
 int* page_table_1 = (int*)PAGE_TABLE_1;
 int* page_table_2 = (int*)PAGE_TABLE_2;
 
-int PPL = 0x38000;
+int PPL = 0x36000;
 
 
 int nextPage(){
