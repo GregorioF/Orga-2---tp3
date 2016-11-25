@@ -186,15 +186,7 @@ _isr80:
     pushad
     
     ;xchg bx, bx
-    push eax
-    push ebx
-    push ecx
-    call fin_intr_pic1
-    
-    pop ecx
-    pop ebx
-    pop eax
-    
+     
     .fondear:
     cmp eax, 0x923
     jne .misil
@@ -223,7 +215,8 @@ _isr80:
     
 	.navegar:
 	cmp eax, 0xAEF
-	jne .fin	
+	jne .fin
+    ;xchg bx, bx	
 	push ecx
 	push ebx
 	mov eax, cr3
@@ -231,7 +224,12 @@ _isr80:
 	call sched_indice_actual
 	push eax
 	call game_navegar
+    ;xchg bx, bx
 	add esp, 16
+    jmp 24 << 3:0
+    ;xchg bx, bx
+    popad 
+    iret
 			
 	.fin:
 	;xchg bx,bx
@@ -246,7 +244,6 @@ global _isr102
 _isr102:
     pushad
     ;xchg bx, bx
-    call fin_intr_pic1
     mov word [pasePorSys],1
     xor eax, eax
     call sched_bandera_actual
@@ -266,7 +263,7 @@ _isr102:
 		push eax
 		mov edi, 20
 		push edi
-		xchg bx, bx
+		;xchg bx, bx
 		call inhabilitar_tarea
 		add esp, 8
 		dec byte [habilitadas]
@@ -370,10 +367,11 @@ sched:
 		mov cx, ax
 		cmp cx, -1
 		je .finEjecutarBanderas
-		
+		;xchg bx, bx
 		add ax, 33
 		shl ax, 3
 		mov [selector], ax
+       ; xchg bx, bx
 		jmp far [offset] 
 		
 		call imprimir_banderitas

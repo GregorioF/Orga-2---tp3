@@ -117,7 +117,7 @@ void reiniciar_banderas(){
         tss_banderas[i].cs = GDT_COD_L3 << 3 | 0x3;
         tss_banderas[i].ds = GDT_DAT_L3 << 3 | 0x3;
         tss_banderas[i].ss = GDT_DAT_L3 << 3 | 0x3;
-        tss_banderas[i].cr3 = dir_tareas[i];
+       // tss_banderas[i].cr3 = dir_tareas[i];
  
 	}
 }

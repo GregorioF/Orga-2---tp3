@@ -7,6 +7,7 @@
 #include "game.h"
 #include "mmu.h"
 #include "screen.h"
+#include "i386.h"
 
 
 unsigned int game_fondear(unsigned int current,unsigned int ancla_dir_fisica, unsigned int cr3) {
@@ -30,12 +31,13 @@ unsigned int game_canonear(unsigned int current, unsigned int dir_misil_fisica, 
 
 unsigned int game_navegar( unsigned int current, unsigned int cr3, unsigned int dir_primera_pag_fisica, unsigned int dir_segunda_pag_fisica) {
 	
+	//breakpoint();
 	unsigned char* codigoPag1 = (unsigned char*) 0x40000000;
 	unsigned char* destinoPag1 = (unsigned char*) dir_primera_pag_fisica;
 	unsigned char* codigoPag2 = (unsigned char*) 0x40001000;
 	unsigned char* destinoPag2 = (unsigned char*) dir_segunda_pag_fisica;
 	unsigned int i = 0;
-	for ( i = 0; i < 1024; i++){
+	for ( i = 0; i < 4096; i++){
 		destinoPag1[i] = codigoPag1[i];
 		destinoPag2[i] = codigoPag2[i];
 	}
@@ -44,6 +46,7 @@ unsigned int game_navegar( unsigned int current, unsigned int cr3, unsigned int 
 	mmu_mapear_pagina(0x40000000, cr3,dir_primera_pag_fisica);
 	
 	actualizar_mapa(dir_primera_pag_fisica,dir_segunda_pag_fisica,1,current);
+	//breakpoint();
 	
     return TRUE;
 }
