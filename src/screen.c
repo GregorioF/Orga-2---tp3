@@ -28,6 +28,9 @@ static const char navio[6] = {"NAVIO "};
 static const char bandera[28] = {"ERROR BANDERA               "};
 char debug[20][8];
 
+char clocksTareas [] = {'|', '|', '|', '|', '|', '|', '|', '|'};
+char clocksBandeas[] = {'|', '|', '|', '|', '|', '|', '|', '|'};
+
 void debugger(unsigned int cr0, unsigned int cr2, unsigned int cr3, unsigned int cr4, unsigned int fs, unsigned int gs, 
 unsigned int es, unsigned int ds, unsigned int edi, unsigned int esi, unsigned int ebp, unsigned int esp2, unsigned int ebx, 
 unsigned int edx, unsigned int ecx, unsigned int eax, unsigned int ss, unsigned int esp, unsigned int eflags, unsigned int cs, unsigned int eip){
@@ -129,6 +132,7 @@ void inicializar_mapa(){
 		
 		paginasTareas[i][3][0] = 0;
 	}
+	ponerUltimaBarra();
 }
 
 char tabla_traduccion (int eax) {
@@ -262,6 +266,7 @@ void actualizar_mapa(unsigned int n, unsigned int m, unsigned int movimiento, un
 		}
 		
 		mostrar_mapa();
+		ponerUltimaBarra();
 }
 
 
@@ -465,7 +470,34 @@ void imprimir_banderitas(){
 				p[j+10][i+38] = temp;
 			}
 		}
+
+		ponerUltimaBarra();
+
 	}
+}
+
+void ponerUltimaBarra(){
+	int j = 0; 
+	int i = 0;
+	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
+	for (i = 4; i < 28; i+=3){
+		char asd [] = {'1', '2', '3', '4', '5', '6', '7', '8'};
+		ca temp = {.c = asd[j], .a = C_BG_LIGHT_GREY | C_FG_BLACK };
+		
+		p[24][i]= temp;
+		temp.c = clocksTareas[j];
+		p[24][i+1] = temp;
+
+		temp.c = asd[j];
+		temp.a = C_BG_MAGENTA | C_FG_WHITE;
+		p[24][i+28] = temp;
+
+		temp.c = clocksBandeas[j];
+		temp.a = C_BG_MAGENTA | C_FG_WHITE;
+		p[24][i+29] = temp;
+		j++;	
+	}
+	
 }
 	
 
@@ -620,3 +652,22 @@ void actualizar_bandera(unsigned short n){
     }
 }
 
+void moverClockBandera(int bandera ){	
+	char c = clocksBandeas [bandera];
+	clocksBandeas [bandera] = siguienteReloj(c);
+
+}
+
+void moverClockTarea(int tarea ){	
+	char c = clocksTareas [tarea];
+	clocksTareas [tarea] = siguienteReloj(c);
+
+}
+
+
+char siguienteReloj(char c){
+	if( c == '|') return '/';
+	else if (c == '/') return '-';
+	else if (c == '-') return 92;
+	else return '|';
+}

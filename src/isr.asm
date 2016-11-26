@@ -29,6 +29,8 @@ extern reiniciar_banderas
 extern imprimir_banderitas
 extern actualizar_mapa
 extern debugger
+extern moverClockBandera
+extern moverClockTarea
 
 ;;
 ;; Definición de MACROS
@@ -364,6 +366,10 @@ sched:
 		mov word [pasePorSys],0
 		call sched_proxima_bandera
 		;xchg bx,bx
+		and eax, 0x0000ffff
+		push eax
+		call moverClockBandera
+		pop eax
 		mov cx, ax
 		cmp cx, -1
 		je .finEjecutarBanderas
@@ -414,6 +420,10 @@ sched:
 		mov cx, ax
 		call sched_proximo_indice
 		;xchg bx, bx
+		and eax, 0x0000ffff
+		push eax
+		call moverClockTarea
+		pop eax
 		cmp cx, ax
 		jne .saltar
 		

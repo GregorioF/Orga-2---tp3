@@ -39,5 +39,9 @@ void imprimir_nombre_del_grupo();
 
 void screen_pintar_pantalla();
 void actualizar_mapa(unsigned int n, unsigned int m, unsigned int movimiento, unsigned int current);
+void ponerUltimaBarra();
+void moverClockBandera(int bandera );
+char siguienteReloj(char c);
+void moverClockTarea(int tarea);
 
 #endif  /* !__SCREEN_H__ */
