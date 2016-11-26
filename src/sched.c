@@ -22,6 +22,7 @@ void inhabilitar_tarea(unsigned int error ,short n){
 		tareas[n]=0;
 		borrarDelMapa(n);
 		printearError(n,error);
+		modificarClock(n);
 	}
 }
 short sched_proximo_indice() {

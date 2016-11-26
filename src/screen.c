@@ -31,6 +31,9 @@ char debug[20][8];
 char clocksTareas [] = {'|', '|', '|', '|', '|', '|', '|', '|'};
 char clocksBandeas[] = {'|', '|', '|', '|', '|', '|', '|', '|'};
 
+unsigned char formatoTarea [] = { (C_BG_LIGHT_GREY | C_FG_BLACK), (C_BG_LIGHT_GREY | C_FG_BLACK),  (C_BG_LIGHT_GREY | C_FG_BLACK) , (C_BG_LIGHT_GREY | C_FG_BLACK), (C_BG_LIGHT_GREY | C_FG_BLACK) , (C_BG_LIGHT_GREY | C_FG_BLACK), (C_BG_LIGHT_GREY | C_FG_BLACK) , (C_BG_LIGHT_GREY | C_FG_BLACK) , (C_BG_LIGHT_GREY | C_FG_BLACK)};
+unsigned char formatoBandera [] = {C_BG_MAGENTA | C_FG_WHITE, C_BG_MAGENTA | C_FG_WHITE, C_BG_MAGENTA | C_FG_WHITE, C_BG_MAGENTA | C_FG_WHITE, C_BG_MAGENTA | C_FG_WHITE, C_BG_MAGENTA | C_FG_WHITE, C_BG_MAGENTA | C_FG_WHITE, C_BG_MAGENTA | C_FG_WHITE};
+
 void debugger(unsigned int cr0, unsigned int cr2, unsigned int cr3, unsigned int cr4, unsigned int fs, unsigned int gs, 
 unsigned int es, unsigned int ds, unsigned int edi, unsigned int esi, unsigned int ebp, unsigned int esp2, unsigned int ebx, 
 unsigned int edx, unsigned int ecx, unsigned int eax, unsigned int ss, unsigned int esp, unsigned int eflags, unsigned int cs, unsigned int eip){
@@ -482,18 +485,17 @@ void ponerUltimaBarra(){
 	ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO_SCREEN;
 	for (i = 4; i < 28; i+=3){
 		char asd [] = {'1', '2', '3', '4', '5', '6', '7', '8'};
-		ca temp = {.c = asd[j], .a = C_BG_LIGHT_GREY | C_FG_BLACK };
+		ca temp = {.c = asd[j], .a = formatoTarea [j] };
 		
 		p[24][i]= temp;
 		temp.c = clocksTareas[j];
 		p[24][i+1] = temp;
 
 		temp.c = asd[j];
-		temp.a = C_BG_MAGENTA | C_FG_WHITE;
+		temp.a = formatoBandera[j];
 		p[24][i+28] = temp;
 
 		temp.c = clocksBandeas[j];
-		temp.a = C_BG_MAGENTA | C_FG_WHITE;
 		p[24][i+29] = temp;
 		j++;	
 	}
@@ -669,6 +671,17 @@ void moverClockTarea(int tarea ){
 char siguienteReloj(char c){
 	if( c == '|') return '/';
 	else if (c == '/') return '-';
-	else if (c == '-') return 92;
+	else if (c == '-') return 92 ;
+	else if (c == ' ') return ' '; 
 	else return '|';
+}
+
+void modificarClock(short n){
+	n = n % 8;
+
+	formatoTarea[n] = C_BG_RED | C_FG_WHITE;
+	clocksTareas[n] = ' ';
+
+	formatoBandera[n] = C_BG_RED | C_FG_WHITE;
+	clocksBandeas[n] = ' ';
 }

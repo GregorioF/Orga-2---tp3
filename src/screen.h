@@ -43,5 +43,6 @@ void ponerUltimaBarra();
 void moverClockBandera(int bandera );
 char siguienteReloj(char c);
 void moverClockTarea(int tarea);
+void modificarClock(short n );
 
 #endif  /* !__SCREEN_H__ */
