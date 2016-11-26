@@ -655,13 +655,14 @@ void actualizar_bandera(unsigned short n){
 void moverClockBandera(int bandera ){	
 	char c = clocksBandeas [bandera];
 	clocksBandeas [bandera] = siguienteReloj(c);
+	ponerUltimaBarra();
 
 }
 
 void moverClockTarea(int tarea ){	
 	char c = clocksTareas [tarea];
 	clocksTareas [tarea] = siguienteReloj(c);
-
+	ponerUltimaBarra();
 }
 
 
