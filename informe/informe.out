@@ -1,7 +1,14 @@
-\BOOKMARK [1][-]{section.1}{Ejercicio 1}{}% 1
-\BOOKMARK [1][-]{section.2}{Ejercicio 2}{}% 2
-\BOOKMARK [1][-]{section.3}{Ejercicio 3}{}% 3
-\BOOKMARK [1][-]{section.4}{Ejercicio 4}{}% 4
-\BOOKMARK [1][-]{section.5}{Ejercicio 5}{}% 5
-\BOOKMARK [1][-]{section.6}{Ejercicio 6}{}% 6
-\BOOKMARK [1][-]{section.7}{Ejercicio 7}{}% 7
+\BOOKMARK [1][-]{section.1}{GDT}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{TSS entrys}{section.1}% 2
+\BOOKMARK [1][-]{section.2}{Modo Protegido}{}% 3
+\BOOKMARK [1][-]{section.3}{Paginaci\363n}{}% 4
+\BOOKMARK [1][-]{section.4}{IDT}{}% 5
+\BOOKMARK [1][-]{section.5}{TSS}{}% 6
+\BOOKMARK [1][-]{section.6}{Scheduler}{}% 7
+\BOOKMARK [1][-]{section.7}{Ejercicio 1}{}% 8
+\BOOKMARK [1][-]{section.8}{Ejercicio 2}{}% 9
+\BOOKMARK [1][-]{section.9}{Ejercicio 3}{}% 10
+\BOOKMARK [1][-]{section.10}{Ejercicio 4}{}% 11
+\BOOKMARK [1][-]{section.11}{Ejercicio 5}{}% 12
+\BOOKMARK [1][-]{section.12}{Ejercicio 6}{}% 13
+\BOOKMARK [1][-]{section.13}{Ejercicio 7}{}% 14

@@ -1,0 +1,72 @@
+
+\section{GDT}
+\par{La Tabla de descriptores global o GDT se encarga de almacenar los descriptores de segmento de nuestro sistema. Es la encargada de organizar el sistema de segmentación.
+Cada entrada es un descriptor, y cada descriptor nos habilita distintas secciones de la memoria. En el caso del tp, nuestro sistema usa segmentación flat, por ende cada descriptor se maneja con el mismo rango de memoria, pero lo que cambia son los atributos con los que se accede a ella.
+Contamos con una estructura, gdt$\_$entry, la cual completamos de la siguiente manera:
+\begin{itemize}
+\item Descriptor Nulo (requerido por Intel).
+\item Descriptores Nulos desde la entrada 1 hasta la 17 (requeridos por el tp).
+\item Descriptor de Segmento de Código de nivel 0 (privilegios de supervisor y lectura habilitada).
+\item Descriptor de Segmento de Código de nivel 3 (privilegios de usuario y lectura habilitada).
+\item Descriptor de Segmento de Datos de nivel 0 (privilegios de supervisor y escritura habilitada).
+\item Descriptor de Segmento de Datos de nivel 3 (privilegios de usuario y escritura habilitada).
+\item Descriptor de Segmento de video 
+\end{itemize}
+\medskip
+\par{Los descriptores previos tenían como base 0x0000, y como límite, 0x6fff, además, el bit de granularidad seteado, por ende cada uno de los segmentos referencia los primeros 1.75 GB. Excepto por el descriptor de segmento de video, el cual posee como base: 0xb800, límite: 0x0f9f y la granularidad en 0.
+Todos tenían el bit de sistema en 1 y el de presente también seteado.
+}
+\medskip
+
+\subsection{TSS entrys}
+Luego tenemos las entradas de las tareas, en las cuales profundizaremos más adelante.
+\begin{itemize}
+\item Descriptor de la Tarea Inicial.
+\item Descriptor de la Tarea Idle.
+\item De la entrada 25 hasta la 32, nos encontramos con descriptores de tss para cada una de las tareas de nuestro sistema.
+\item De la entrada 33 hasta la 40, nos encontramos con descriptores de tss para cada una de las banderas de nuestro tp.
+\end{itemize}
+
+
+\begin{alltt}
+\normalfont
+		       Todos estos descriptores mantienen el siguiente formato:
+		       
+         \textbf{Limite:} 0x67
+			   
+         \textbf{Base:} Dirección de la tss
+                     
+         \textbf{Presente:} Seteado
+                     
+         \textbf{Tipo:} 0x9. Combinado con el bit de sistema en 0, tipo 9 se refiere a un descriptor de TSS.
+                
+         \textbf{Sistema:} 0x0
+                     
+         \textbf{DPL:} 0x0. Esto es ya que en nuestro sistema queremos que las tareas sólo puedan ser accedidas por
+         el kernel, es decir, que no se pueda "saltar" de una tarea a otra.
+			 	
+         \textbf{Granularidad:} 0x0
+                     
+         \textbf{AVL:} 0x0
+                     
+         \textbf{DB:} 0x1 (32 bits)
+                     
+         \textbf{L:} 0x0
+\end{alltt}
+}
+
+\section{Modo Protegido}
+\par{Al inicio de nuestro sistema nos encontramos en modo real. Esto es consecuencia de la condición de COMPATIBILIDAD de intel. Al iniciar nuestro sistema tenemos un 8086, nuestro código es de \textbf{16 BITS}; \textbf{NO} hay protección de memoria; podemos utilizar \textbf{TODAS} las instrucciones; AX,CX,DX \textbf{NO} son de propósito general. Y además, sólo podemos direccionar 1 MB de memoria. Por esto, luego de cargar los descriptores de código y datos vamos a pasar a "modo protegido", en el cual contamos con código de 32 bits, protección a memoria, y 4 GB de memoria direccionable.
+}
+\par{
+Para poder realizar esto tenemos que encargarnos de un par de puntos previamente:
+\begin{itemize}
+\item Cargar el GDTR con la dirección de la GDT (LGDTR)
+\item Deshabilitamos las interrupciones \textbf{EXTERNAS} (CLI)
+\item Habilitamos A20, es decir, habilitamos el acceso a direcciones de memoria superiores a 2$^{20}$.
+\item Seteamos el bit PE del registro CR0. (PE: Protected Mode Enable).
+\end{itemize}
+Entonces, con el contexto ya armado, ejecutamos la instrucción: \textbf{JMP FAR [selector]:[offset]}. En el caso de nuestro TP, el selector sería 18$<<$3, ya que este es el descriptor de código de nivel 0; y como offset utilizamos una etiqueta la cual se encontraba inmediatamente a continuación de esta instrucción.
+}
+
+\clearpage

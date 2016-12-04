@@ -22,6 +22,7 @@
 \usepackage{wrapfig}
 \usepackage{caption}
 \usepackage{tikz}
+\usepackage{alltt}
 
 % facilitates the creation of memory maps. Start address at the bottom, end address at the top.
 % syntax: \memsection{end address}{start address}{height in lines}{text in box}
@@ -68,6 +69,19 @@
 \tableofcontents
 
 \clearpage
+
+\input{GDT}
+
+\input{Paginacion}
+
+\input{IDT}
+
+\input{TSS}
+
+\input{Scheduler}
+
+\newpage
+
 \input{Ejercicio1}
 
 \input{Ejercicio2}
