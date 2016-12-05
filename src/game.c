@@ -17,8 +17,8 @@ unsigned int game_fondear(unsigned int current,unsigned int ancla_dir_fisica, un
 }
 
 unsigned int game_canonear(unsigned int current, unsigned int dir_misil_fisica, unsigned int dir_buffer_absoluta) {
-	unsigned char* misil = (unsigned char*) dir_misil_fisica;  
-	unsigned char* destino = (unsigned char*) dir_buffer_absoluta;
+	unsigned char* destino = (unsigned char*) dir_misil_fisica;  
+	unsigned char* misil = (unsigned char*) dir_buffer_absoluta;
 	unsigned int i = 0;
 	for ( i = 0; i < 97; i++ ){
 		destino[i] = misil[i];

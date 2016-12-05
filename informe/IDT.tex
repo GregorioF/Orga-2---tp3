@@ -37,10 +37,81 @@ _isr33:
     popad
     iret
 \end{lstlisting}
-\par{La instrucción \textbf{in al, 0x60} escribe en al el scan code almacenado en el puerto 0x60 y luego utilizamos esta información para escribir en pantalla con la función \textbf{print$\_$numerito}.}
+\par{La instrucción \textbf{in al, 0x60} guarda en al el scan code almacenado en el puerto 0x60 y luego utilizamos esta información para escribir en pantalla con la función \textbf{print$\_$numerito}.}
 \par{Esta función se encargará de llamar a las funciones auxiliares necesarias para cumplir con lo establecido al principio de esta sección, mostrar el mapa si se presionó la tecla M, y la información de estados si fue la E.}
-\par{Más adelante en la sección \ref{subsec: PANTALLA} veremos en profundidad las funciones que se encargan de la pantalla.}
-\subsection{Int 80}
-\par{ESTA LA HACE LUCIA}
-\subsection{Int 102}
-\par{ESTA LA HACE LUCIA}
+\par{Más adelante en la sección \ref{subsec: Pantalla} veremos en profundidad las funciones que se encargan de la pantalla.}
+\subsection{Int 80 (0x50)}
+\par{Esta es una syscall que sólo pueden utilizar los navíos, es conciderado un error si una bandera la llama. Esta syscall cuenta con 3 funcionalidades; \textbf{navegar}, \textbf{fondear} y \textbf{cañonear}. Depende de los parámetros con los que es llamada se ejecutan las distintas funcionalidades.}
+\par{A continuación presentamos un pseudocódigo de la rutina de atención a la interrupción, lo presentamos en lenguaje C para hacer más sencillo su entendimiento.}
+
+\begin{algorithmic}
+	\If{EAX == 0xAEF}
+	\State navegar(current, cr3, ebx, ecx)
+	\EndIf
+	\If{EAX == 0x923}
+		\State fondear(current, ebx, cr3)
+	\EndIf
+	\If{EAX == 0x83A}
+	\State cañonear(current, ebx, ecx)
+	\EndIf
+\end{algorithmic}
+
+\subsubsection{Navegar}
+\par{Como su nombre lo indica, consiste en moverse a través del espacio marítimo, el cual en nuestro caso consiste en el espacio de memoria entre la dirección 0x100000 y la dirección 0x77FFFF. Los parámetros son 2 direcciones \textbf{físicas} las cuales serán mapeadas a las 2 páginas del navío respectivamente.}
+\par{Para llamar a esta funcionalidad se debe escribir en EAX, 0xAEF. En EBX y ECX se pasan las direcciones físicas antes mencionadas.}
+\par{A continuación presentamos un pseudocógido de la función navegar.}
+
+\begin{algorithm}[h!]
+\caption{void navegar(uint current, uint cr3, uint ebx, uint ecx)}
+\begin{algorithmic}
+	\State destinoPag1 = (unsigned char*) ebx
+	\State destinoPag2 = (unsigned char*) ecx
+	\State pagina1TareaActual = (unsigned char*) 0x40000000
+	\State pagina2TareaActual = (unsigned char*) 0x40001000
+	\For{ $i \gets 0~..~4095$ }
+		\State destinoPag1[i] $\gets$ pagina1TareaActual
+		\State destinoPag2[i] $\gets$ pagina2TareaActual
+	\EndFor
+
+	\State mmu$\_$mapear$\_$pagina(0x40000000, cr3, ebx)
+	\State mmu$\_$mapear$\_$pagina(0x40001000, cr3,ecx)
+	
+	\State actualizar$\_$mapa(ebx,ecx,1,current)
+	
+\end{algorithmic}
+\end{algorithm}
+
+\par{La función actualizar mapa se define en la sección \ref{subsec: Pantalla}.}
+
+\subsubsection{Fondear}
+\par{Esta funcionalidad consiste en mover el ancla de lugar, y en nuestro TP consiste puntualmente en mapear la página asociada al kernel de nuestra tarea a otra dirección física entre el rango de 0x0x000000 hasta 0x0FFFFF.}
+\par{Como ya vimos para llamar esta función EAX debe ser 0x923, y en EBX debemos pasar la nueva dirección \textbf{física} a mapear.}
+\par{A continuación presentamos un pseudocógido de la función fondear.}
+
+\begin{algorithm}[h!]
+\caption{void fondear(uint current, uint ebx, uint cr3)}
+\begin{algorithmic}
+	\State mmu$\_$mapear$\_$pagina(0x40002000,ebx,cr3)
+	\State actualizar$\_$mapa(ebx,0,0,current)
+\end{algorithmic}
+\end{algorithm}
+\subsubsection{Cañonear}
+\par{Cada uno de nuestros navíos cuenta con un cañon con el cual lanzar misiles. A esta funcionalidad se accede con EAX==0x83A y consiste en escribir 97 bytes desde la dirección pasada por EBX.}
+\par{A continuación presentamos un pseudocógido de la función fondear.}
+
+\begin{algorithm}[h!]
+\caption{void canonear(uint current, uint ebx, uint ecx)}
+\begin{algorithmic}
+	\State misil = (unsigned char*) ecx
+	\State destino = (unsigned char*) ebx
+	\For (i $\gets 0~..~96$ )
+	\State destino[i] $\gets$ misil[i]
+	\EndFor
+	\State actualizar$\_$mapa(ebx,0,2,current);
+\end{algorithmic}
+\end{algorithm}
+
+
+	
+\subsection{Int 102 (0x66)}
+\par{Esta syscall se encarga de salir de las banderas y saltar a la tarea idle. También se fija que ha sido llamada por una bandera y no por un navío, ya que si fue así, a este habrá que eliminarlo del scheduler junto con su bandera.}
