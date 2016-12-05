@@ -2,7 +2,9 @@
 \section{GDT}
 \par{La Tabla de descriptores global o GDT se encarga de almacenar los descriptores de segmento de nuestro sistema. Es la encargada de organizar el sistema de segmentación.
 Cada entrada es un descriptor, y cada descriptor nos habilita distintas secciones de la memoria. En el caso del tp, nuestro sistema usa segmentación flat, por ende cada descriptor se maneja con el mismo rango de memoria, pero lo que cambia son los atributos con los que se accede a ella.
-Contamos con una estructura, gdt$\_$entry, la cual completamos de la siguiente manera:
+Contamos con una estructura, gdt$\_$entry, la cual completamos con descriptores de segmentos y de tss.}
+\subsection{Descriptores de Segmento}
+\par{
 \begin{itemize}
 \item Descriptor Nulo (requerido por Intel).
 \item Descriptores Nulos desde la entrada 1 hasta la 17 (requeridos por el tp).
@@ -18,7 +20,7 @@ Todos tenían el bit de sistema en 1 y el de presente también seteado.
 }
 \medskip
 
-\subsection{TSS entrys}
+\subsection{Descriptores de TSS}
 Luego tenemos las entradas de las tareas, en las cuales profundizaremos más adelante.
 \begin{itemize}
 \item Descriptor de la Tarea Inicial.
