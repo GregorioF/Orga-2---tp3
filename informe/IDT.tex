@@ -37,7 +37,7 @@ _isr33:
     popad
     iret
 \end{lstlisting}
-\par{La instrucción \textbf{in al, 0x60} escribe en al el scan code almacenado en el puerto 0x60 y luego utilizamos esta información para escribir en pantalla con la función \textbf{print_numerito}.}
+\par{La instrucción \textbf{in al, 0x60} escribe en al el scan code almacenado en el puerto 0x60 y luego utilizamos esta información para escribir en pantalla con la función \textbf{print$\_$numerito}.}
 \par{Esta función se encargará de llamar a las funciones auxiliares necesarias para cumplir con lo establecido al principio de esta sección, mostrar el mapa si se presionó la tecla M, y la información de estados si fue la E.}
 \par{Más adelante en la sección \ref{subsec: PANTALLA} veremos en profundidad las funciones que se encargan de la pantalla.}
 \subsection{Int 80}
