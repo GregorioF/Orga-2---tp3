@@ -2,7 +2,7 @@
 \label{subsec:IDT}
 \par{La IDT, Interruption Descriptor Table, se encarga de almacenar descriptores de rutinas de atención sobre interrpuciones de software, de hardware, y expeciones. Este se representa como un arreglo de maximo 2**13 entradas, de tamaño 64 bits. Estos Descriptores cargan informacion sobre, donde se hubica dicha rutina de atencion, atributos de presente, o DPL (nivel de privilegio requerido para acceder a dicha interrupcion), y el selector de segmento que se va a utilizar, en general este selector es el de Código nivel 0, ya que una interrpucion suele necesitar de accesos a nivel Kernel.}
 
-\subsubsection*{Rellenado de IDT}
+\subsection{Rellenado de IDT}
 \begin{itemize}
 	\item {\bfseries Expeciones: }
 	\par{Por restricciones de Intel, desde la posicion 0 hasta la 19 es donde se van a hubicar los descriptores de rutinas de atencion sobre expeciones, segun el orden que indica el manual de Intel. Estas tienen los atributos de presente en 1 y el DPL en 3, pues no queremos que ninguna tarea de nivel usuario llame a una Exepcion intencionalmente. Luego las entradas entre la 20 y la 31 estan reservadas a futuras posible exepciones, o usos que Intel les proporcione.}
@@ -15,6 +15,15 @@
 
 \end{itemize}
 
-\subsubsection*{Proceso de identificación de interrupción requerida}
+\subsection{Proceso de identificación de interrupción requerida}
 \par{Cuando ocurre una interrpcion / exepción, el proceso basicamente es obtener el descriptor de interrupcion señalado por el Vector de Interrpciones, y de ahi saltar directamente a la rutina de atención. Ahora la forma en la que se carga dicho Vector es, para expeciones, el mismo procesador se encarga de indentificar cual es la posicion asignada a dicha interrupcion, dentro de la IDT segun Intel, y carga el vector con dicho valor.  Para interrupciones de Hardware se utiliza lo que es el PIC de interrupciones donde cuando un elemento externo solicita una interrpucion, estos estan ordenados en un orden especifico segun un handler de hardware, y este identifica cual de los aparatos fue el que la solicito, cargando de esta manera al Vector de Interrupciones. Y por último a una interrpucion de Software simplemente es el numero q le sigue a la instruccion "int" que es la utilizada para solicitar una interrpucion especifica.}
 
+\subsection{Excepciones}
+\par{ESTA ME DA IGUAL}
+\subsection{Interrupción de reloj}
+\subsection{Interrupción de teclado}
+\par{ESTA LA HACE LUCIA}
+\subsection{Int 80}
+\par{ESTA LA HACE LUCIA}
+\subsection{Int 102}
+\par{ESTA LA HACE LUCIA}
