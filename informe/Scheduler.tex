@@ -1,1 +1,29 @@
 \section{Scheduler}
+\par{El scheduler es quien se encarga de determinar qué tarea debe ser ejecutada. Para esto contamos con dos arreglos de 8 posiciones, en el caso de nuestro TP, en el cual se almacena qué navíos/banderas pueden ejecutarse. En el caso de nuestro TP algún navío o bandera puede cometer algún error, ya sea una excepción, en cuyo caso como vimos en la sección \ref{subsec: IDT} el handler de la interrupción se encargará de ello; o, en el caso de las banderas, estas pueden haber sido interrumpidas por el reloj antes de pasar por la int 0x50. Cualquiera sea el caso, esto conlleva a la eliminación del navío y bandera correspondiente, por esto es que contamos con los arreglos que nos determinan las posibles "siguiente tarea".}
+\par{
+Como bien vimos en la sección \ref{subsec: IDT}, cuando debemos eliminar un navío y su bandera, lo único que hacemos es eliminar el índice correspondiente en el scheduler con la función \textbf{inhabilitar$\_$tarea(uint error, int n)}, la cual además, nos imprime en la pantalla de estados el error que se ha cometido.
+}
+\par{Como el scheduler se comprende de 2 arreglos, contamos con 2 índices, una para cada uno de ellos; \textbf{current} de navíos, y \textbf{currentBanderas}. Contamos con dos funciones las cuales nos proveen el siguiente navío o bandera a ejecutarse, \textbf{sched$\_$proximo$\_$indice} y \textbf{sched$\_$proxima$\_$bandera}. A continuación mostramos un pseudocódigo que aplica a ambas funciones pero con sus respectivos \textbf{currents} y con la diferencia que \textbf{sched$\_$proxima$\_$bandera} se reinicia al llegar a 8.}
+
+\begin{algorithm}[h!]
+\caption{sched$\_$proximo$\_$indice}
+\begin{algorithmic}
+	\State current += 1
+	\State i = 0
+	\While{ tareas[current]$\%$8 == 0 and i$<$9 }
+		\State current += 1
+		\State i += 1
+	\EndWhile
+	\If{tareas[current] == 0}
+	\State current = -1
+	\EndIf
+	\State \textbf{return} current
+\end{algorithmic}
+\end{algorithm}
+
+\par{Como vimos en la sección \ref{subsec:IDT}, en nuestro TP la interrupción externa 32, la interrupción de reloj, funciona como regulador de los tiempos de las tareas. Cada navío tiene un tick de reloj para correr, si llama a una syscall, el tiempo restante de su quantum es destinado a la tarea idle. Las banderas, por su parte, también tienen un tick de reloj para ejecutarse, con la salvedad de que antes de cumplido este tiempo tienen que llamar a la syscall 0x50. En cada interrupción de reloj se determina cuál será la próxima tarea a ejecutarse.}
+\par{En particular, en nuestro TP, tenemos determinado que cada 3 quantum de tareas se corren \textbf{TODAS} las banderas "disponibles", es decir, las que no han sido eliminadas del scheduler por algún tipo de error.}
+\par{En resumen, las tareas/navíos se ejecutan en orden, cada 3 quantum se ejecutan las banderas que siguen en el scheduler, al cometer algún error el navío/bandera es eliminado del scheduler junto con su bandera/navío, la función proximo$\_$indice nos devuelve el índice de la tarea a ejecutarse, si es que la hay.} 
+\medskip
+\par{\textbf{¿Y qué sucede cuando no quedan tareas a ejecutarse?}}
+\par{Sigue corriendo indefinidamente la tarea idle. Situación que efectivamente ocurre en nuestro TP.}

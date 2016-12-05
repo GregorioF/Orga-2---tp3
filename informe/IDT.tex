@@ -1,4 +1,5 @@
 \section{IDT}
+\label{subsec:IDT}
 \par{La IDT, Interruption Descriptor Table, se encarga de almacenar descriptores de rutinas de atención sobre interrpuciones de software, de hardware, y expeciones. Este se representa como un arreglo de maximo 2**13 entradas, de tamaño 64 bits. Estos Descriptores cargan informacion sobre, donde se hubica dicha rutina de atencion, atributos de presente, o DPL (nivel de privilegio requerido para acceder a dicha interrupcion), y el selector de segmento que se va a utilizar, en general este selector es el de Código nivel 0, ya que una interrpucion suele necesitar de accesos a nivel Kernel.}
 
 \subsubsection*{Rellenado de IDT}
