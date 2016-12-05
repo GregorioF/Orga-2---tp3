@@ -22,7 +22,24 @@
 \par{ESTA ME DA IGUAL}
 \subsection{Interrupción de reloj}
 \subsection{Interrupción de teclado}
-\par{ESTA LA HACE LUCIA}
+\par{La interrupción 33 es la que se encarga del teclado, en nuestro caso sólo nos interesan 2 teclas de éste, \textbf{M} y \textbf{E}. La M nos muestra el mapa del juego, y la E el estado de los navíos y las banderas flameando.}
+\par{A continuación presentamos un pseudocódigo de la rutina de atención a la int 33.}
+\begin{lstlisting}[language={[x86masm]Assembler}]
+global _isr33
+_isr33:
+    pushad
+    xor eax, eax
+    in al, 0x60
+    push eax
+    call print_numerito
+    add esp, 4
+    call fin_intr_pic1
+    popad
+    iret
+\end{lstlisting}
+\par{La instrucción \textbf{in al, 0x60} escribe en al el scan code almacenado en el puerto 0x60 y luego utilizamos esta información para escribir en pantalla con la función \textbf{print_numerito}.}
+\par{Esta función se encargará de llamar a las funciones auxiliares necesarias para cumplir con lo establecido al principio de esta sección, mostrar el mapa si se presionó la tecla M, y la información de estados si fue la E.}
+\par{Más adelante en la sección \ref{subsec: PANTALLA} veremos en profundidad las funciones que se encargan de la pantalla.}
 \subsection{Int 80}
 \par{ESTA LA HACE LUCIA}
 \subsection{Int 102}
