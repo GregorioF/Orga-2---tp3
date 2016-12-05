@@ -1,24 +1,24 @@
 \section{Paginación}
-\par{El sistema de Paginacion de memoria, es una sistema en el cual se organiza la memoria de a paginas con tamaño 4K. Este sistema describe una funcion de mapeo de las direcciones virtuales, obtenidas a travez del sistema de Segmentacion, a direcciones fisicas de memoria. Agregando de paso, nuevos niveles de privilegio, como Supervisor o User, o en que direcciones se puede leer y escribir.}
-\par{En este sistema optamos por implementar un sistema de paginacion en dos niveles. Esto significa que, para implementar el mapeo de memoria virtual a fisica se utilizan los siguientes elementos: }
+\par{El sistema de Paginación de memoria organiza ésta de a péginas con tamaño 4K. Este sistema describe una función de mapeo de las direcciones virtuales, obtenidas a través del sistema de Segmentacion, a direcciones físicas de memoria. Agregando de paso, nuevos niveles de privilegio, como Supervisor o Usuario, o en qué direcciones se puede leer y escribir.}
+\par{En nuestro TP optamos por implementar un sistema de paginación en dos niveles. Esto significa que, para implementar el mapeo de memoria virtual a física se utilizan los siguientes elementos: }
 \begin{itemize}
 	\item {\bfseries CR3: }
-	\par{ En el registro de Control CR3, se va a tener guardado la direccion del Directorio de Paginas que esta actuando actualmente, en un sistema se pueden tener mucho mapeos diferentes, por lo que simplemente para cambiar el esquema de Paginación solo se tiene que remplazar el valor del CR3 por la direccion del Directorio de Paginas deseado.}
+	\par{ En el registro de Control CR3, se va a tener guardado la direccion del Directorio de Paginas que esta actuando actualmente, en un sistema se pueden tener muchos mapeos diferentes, por lo que simplemente para cambiar el esquema de Paginación solo se tiene que remplazar el valor del CR3 por la direccion del Directorio de Paginas deseado.}
 	\item {\bfseries Directorio de Páginas: }
-	\par{Esta estructura consiste en un arreglo de 1024 entradas, en las cuales cada PD\_entry (entrada del Directorio de paginas) los primeros 20 bits son el prefijo de la direccion en la cual esta ubicada la Tabla de paginas correspondiente  a dicha entrada, como estan alineadas a 4K cada direccion, los ultimos 12 bits de esta direccion se asumen que son 0. Y dentro de cada PD\_entry se utilizan estos bits para establecer atributos, el bit 0 para marcar Presente, el bit 1 para marcar R/W, y el bit 2 para marcar U/S, como los principales atributos mencionados.}
+	\par{Esta estructura consiste en un arreglo de 1024 entradas, en las cuales cada PD\_entry (entrada del Directorio de paginas) los primeros 20 bits son el prefijo de la dirección en la cual está ubicada la Tabla de páginas correspondiente a dicha entrada. Como cada página está alineada a 4K los ultimos 12 bits de esta dirección se asumen que son 0. Y dentro de cada PD\_entry se utilizan estos bits para establecer atributos, el bit 0 para marcar Presente, el bit 1 para marcar R/W, y el bit 2 para marcar U/S,etc. Los mencionados son los que utilizamos en nuestro TP.}
 	\item {\bfseries Tabla de Páginas: }
-	\par{Estra estructura consiste tambien en un arreglo de 1024 entradas, en la cual cada PT\_entry los primeros 20 bits marcan la posicion donde comienza una pagina de 4K de direcciones fisicas de memoria. Nuevamente como las paginas son de 4K los últimos 12 bits de esta dirección se asumen que son 0, y dentro de la cada entrada de la PT, se utilizan para marcar atributos, los principales son los mismos que los mencionados para la PD}
+	\par{Esta estructura consiste tambien en un arreglo de 1024 entradas, de cada PT\_entry los primeros 20 bits marcan la dirección donde comienza una pagina de 4K, y dicha dirección es física. Nuevamente como las páginas son de 4K los últimos 12 bits de esta dirección se asumen que son 0, y dentro de la cada entrada de la PT, estos se utilizan para marcar atributos, los principales son los mismos que los mencionados para la PD.}
 \end{itemize}
 
-\subsubsection*{Proceso de Traducion Memoria Virtual -> Memoria Fisica}
-\par{ Sea D la dirección de la cual quiero obtener la direccion fisica mapeada, el proceso de obtencion es el siguiente.} 
-\par {Los primero 10 bits de D (D[31:22]), van a ser utilizados como indice dentro de la Page Directory, en la cual, de la entrada obtenida  se va a sacar la direccion de la Page Table correspondiente a esta direccion.}
-\par{ Los segundo 10 bits de D (D[21:12]), van a ser utilizados como indice dentro de la Page Table, en la cual de la entrada obtenida se va a sacar la direccion de la pagina de 4K en donde esta contenida la direccion fisica mapeada a D}
-\par{ Por último, los ultimos 12 bits de D (D[11:0]), van a ser utilizados como Offset dentro de la pagina obtenida atravez de la Page Table. Osea la direccion final seria igual a direccion de pagina fisica 4K obtenida de PT + D[11:0]. Todo esto suponiendo que D paso todos los controles implementados en el sistema de paginación.}
+\subsection{Proceso de Traducion Memoria Virtual -> Memoria Fisica}
+\par{ Sea D la dirección virtual de la cual quiero obtener la dirección fisica mapeada, el proceso de obtención es el siguiente.} 
+\par {Los primero 10 bits de D (D[31:22]), van a ser utilizados como índice dentro de la Page Directory, en la cual, de la entrada obtenida  se va a sacar la dirección de la Page Table correspondiente.}
+\par{ Los segundo 10 bits de D (D[21:12]), van a ser utilizados como índice dentro de la Page Table, en la cual de la entrada obtenida se va a sacar la dirección de la pagina de 4K.}
+\par{ Por último, los ultimos 12 bits de D (D[11:0]), van a ser utilizados como Offset dentro de la pagina obtenida a través de la Page Table. Osea la dirección final sería: dirección de pagina física obtenida de PT + D[11:0]. Todo esto suponiendo que D pasó todos los controles del sistema de paginación.}
 
-\subsubsection*{Paginación De Nuestro Trabajo Práctico}
-\par{En primera instancia, inicializamos el mapeo para el codigo en kernel sobre el directorio de paginas ubicado en la direccion 0x27000, donde hacemos identity mapping desde la dirección 0x00000000 a 0x0077FFFF. Asignando en la seccion de atributos de cada entrada el valor de 0x3 que significa Presente = 1, R/W = 1, y nivel Supervisor. Las demas entradas las seteamos en 0.}
-\par{Luego el esquema de paginación va a cambair según la tarea que se este ejectuando, para ello inicializamos varios directorios de paginas, en el cual generamos un mapping segun corresponda a la tarea que corra actualmente, donde mantenemos el mapeo hecho para el directorio del Kernel, pero agregando paginas nivel Usuario donde la tarea se va a ejecutar.}
+\subsection{Paginación De Nuestro Trabajo Práctico}
+\par{En primera instancia, inicializamos el mapeo para el código del kernel sobre el directorio de páginas ubicado en la dirección 0x27000, donde hacemos identity mapping desde la dirección 0x00000000 a 0x0077FFFF. Asignando en la sección de atributos de cada entrada el valor de 0x3 que significa Presente = 1, R/W = 1, y nivel Supervisor. Las demas entradas las seteamos en 0.}
+\par{Luego el esquema de paginación va a cambiar según la tarea que se este ejectuando, para ello inicializamos varios directorios de paginas, en el cual generamos un mapping segun corresponda a la tarea que corra actualmente, donde mantenemos el mapeo hecho para el directorio del Kernel, pero agregando paginas nivel Usuario donde la tarea se va a ejecutar.}
 
 
 

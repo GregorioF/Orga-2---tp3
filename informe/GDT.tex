@@ -15,7 +15,7 @@ Cada descriptor de segmento nos habilita distintas secciones de la memoria. En e
 \end{itemize}
 \medskip
 \par{Los descriptores previos tenían como base 0x0000, y como límite, 0x6fff, además, el bit de granularidad seteado, por ende cada uno de los segmentos referencia los primeros 1.75 GB. Excepto por el descriptor de segmento de video, el cual posee como base: 0xb800, límite: 0x0f9f y la granularidad en 0.
-Todos tenían el bit de sistema en 1 y el de presente también seteado.
+Todos tienen el bit de sistema en 1 y el de presente también seteado.
 }
 \medskip
 
@@ -24,7 +24,7 @@ Luego tenemos las entradas de las tareas, en las cuales profundizaremos más ade
 \begin{itemize}
 \item Descriptor de la Tarea Inicial.
 \item Descriptor de la Tarea Idle.
-\item De la entrada 25 hasta la 32, nos encontramos con descriptores de tss para cada una de las tareas de nuestro sistema.
+\item De la entrada 25 hasta la 32, nos encontramos con descriptores de tss para cada una de los navíos de nuestro sistema.
 \item De la entrada 33 hasta la 40, nos encontramos con descriptores de tss para cada una de las banderas de nuestro tp.
 \end{itemize}
 
@@ -57,17 +57,17 @@ Luego tenemos las entradas de las tareas, en las cuales profundizaremos más ade
 }
 
 \section{Modo Protegido}
-\par{Al inicio de nuestro sistema nos encontramos en modo real. Esto es consecuencia de la condición de COMPATIBILIDAD de intel. Al iniciar nuestro sistema tenemos un 8086, nuestro código es de \textbf{16 BITS}; \textbf{NO} hay protección de memoria; podemos utilizar \textbf{TODAS} las instrucciones; AX,CX,DX \textbf{NO} son de propósito general. Y además, sólo podemos direccionar 1 MB de memoria. Por esto, luego de cargar los descriptores de código y datos vamos a pasar a "modo protegido", en el cual contamos con código de 32 bits, protección a memoria, y 4 GB de memoria direccionable.
+\par{Al inicio de nuestro sistema nos encontramos en modo real. Esto es consecuencia de la condición de COMPATIBILIDAD de intel. }\par{Al iniciar nuestro sistema tenemos un 8086, nuestro código es de \textbf{16 BITS}; \textbf{NO} hay protección de memoria; podemos utilizar \textbf{TODAS} las instrucciones; AX,CX,DX \textbf{NO} son de propósito general. Y además, sólo podemos direccionar 1 MB de memoria.}\par{ Por esto, luego de cargar los descriptores de código y datos vamos a pasar a "modo protegido", en el cual contamos con código de 32 bits, protección a memoria, y 4 GB de memoria direccionable.
 }
 \par{
 Para poder realizar esto tenemos que encargarnos de un par de puntos previamente:
 \begin{itemize}
 \item Cargar el GDTR con la dirección de la GDT (LGDTR)
-\item Deshabilitamos las interrupciones \textbf{EXTERNAS} (CLI)
-\item Habilitamos A20, es decir, habilitamos el acceso a direcciones de memoria superiores a 2$^{20}$.
-\item Seteamos el bit PE del registro CR0. (PE: Protected Mode Enable).
+\item Deshabilitar las interrupciones \textbf{EXTERNAS} (CLI)
+\item Habilitar A20, es decir, habilitar el acceso a direcciones de memoria superiores a 2$^{20}$.
+\item Setear el bit PE del registro CR0. (PE: Protected Mode Enable).
 \end{itemize}
-Entonces, con el contexto ya armado, ejecutamos la instrucción: \textbf{JMP FAR [selector]:[offset]}. En el caso de nuestro TP, el selector sería 18$<<$3, ya que este es el descriptor de código de nivel 0; y como offset utilizamos una etiqueta la cual se encontraba inmediatamente a continuación de esta instrucción.
+Entonces, con el contexto ya armado, ejecutamos la instrucción: \textbf{JMP FAR [selector]:[offset]}. En el caso de nuestro TP, el selector es 18$<<$3, ya que este es el selector del segmento de código de nivel 0; y como offset utilizamos una etiqueta la cual se encuentra inmediatamente a continuación de esta instrucción.
 }
 
 \clearpage
