@@ -48,7 +48,7 @@ _isr33:
 \par{ La función encargada de imprimir la pantalla de estados utiliza la matriz paginasTareas, la matriz flags, el valor de ultimoError y la matriz de debug entre otras cosas.}
 \par{ La primera, lamentamos si confunde su nombre, es una matriz que contiene las posiciones de cada página de cada tarea, pero éstas, en lugar de estar almacenadas como enteros, son una cadena de caracteres; de esta forma nos es más sencillo imprimirlos en la pantalla de estados. La información de la matriz debug nos la provee la pila cuando se produce algún error o alguna interrupción externa. Y en ultimoError se nos informa cuál fue el último error cometido, como bien nos dice su nombre.}
 \subsection{Int 80 (0x50)}
-\par{Esta es una syscall que sólo pueden utilizar los navíos, es conciderado un error si una bandera la llama. Esta syscall cuenta con 3 funcionalidades; \textbf{navegar}, \textbf{fondear} y \textbf{cañonear}. Depende de los parámetros con los que es llamada se ejecutan las distintas funcionalidades.}
+\par{Ésta es una syscall que sólo pueden utilizar los navíos, es conciderado un error si una bandera la llama. Ésta syscall cuenta con 3 funcionalidades; \textbf{navegar}, \textbf{fondear} y \textbf{cañonear}. Depende de los parámetros con los que es llamada se ejecutan las distintas funcionalidades.}
 \par{A continuación presentamos un pseudocódigo de la rutina de atención a la interrupción, lo presentamos en lenguaje C para hacer más sencillo su entendimiento.}
 
 \begin{algorithmic}
@@ -64,7 +64,7 @@ _isr33:
 \end{algorithmic}
 
 \subsubsection{Navegar}
-\par{Como su nombre lo indica, consiste en moverse a través del espacio marítimo, el cual en nuestro caso consiste en el espacio de memoria entre la dirección 0x100000 y la dirección 0x77FFFF. Los parámetros son 2 direcciones \textbf{físicas} las cuales serán mapeadas a las 2 páginas del navío respectivamente.}
+\par{Como su nombre lo indica, consiste en moverse a través del espacio marítimo, el cual en nuestro caso consiste en el espacio de memoria entre la dirección 0x100000 y la dirección 0x77FFFF. Los parámetros son 2 direcciones \textbf{físicas} las cuales serán mapeadas a las 2 páginas virtuales del navío respectivamente.}
 \par{Para llamar a esta funcionalidad se debe escribir en EAX, 0xAEF. En EBX y ECX se pasan las direcciones físicas antes mencionadas.}
 \par{A continuación presentamos un pseudocógido de la función navegar.}
 
@@ -90,7 +90,7 @@ _isr33:
 
 
 \subsubsection{Fondear}
-\par{Esta funcionalidad consiste en mover el ancla de lugar, y en nuestro TP consiste puntualmente en mapear la página asociada al kernel de nuestra tarea a otra dirección física entre el rango de 0x0x000000 hasta 0x0FFFFF.}
+\par{Esta funcionalidad consiste en mover el ancla de lugar, lo que en nuestro TP se traduce puntualmente a mapear la página asociada al kernel de nuestra tarea a otra dirección física entre el rango de 0x0x000000 hasta 0x0FFFFF.}
 \par{Como ya vimos para llamar esta función EAX debe ser 0x923, y en EBX debemos pasar la nueva dirección \textbf{física} a mapear.}
 \par{A continuación presentamos un pseudocógido de la función fondear.}
 
@@ -102,7 +102,7 @@ _isr33:
 \end{algorithmic}
 \end{algorithm}
 \subsubsection{Cañonear}
-\par{Cada uno de nuestros navíos cuenta con un cañon con el cual lanzar misiles. A esta funcionalidad se accede con EAX==0x83A y consiste en escribir 97 bytes desde la dirección pasada por EBX.}
+\par{Cada uno de nuestros navíos cuenta con un cañon con el cual lanzar misiles. A esta funcionalidad se accede con EAX==0x83A y consiste en escribir 97 bytes desde la dirección pasada por EBX hasta EBX+97.}
 \par{A continuación presentamos un pseudocógido de la función fondear.}
 
 \begin{algorithm}[h!]

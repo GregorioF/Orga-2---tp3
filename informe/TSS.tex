@@ -1,10 +1,10 @@
 \section{TSS}
-\par{El Task State Segment o TSS, es una estructura especial del sistema utilizada para guardar los contextos de ejecucion de una tarea al momento de dejarla para saltar a otra. Y esta justamente comenzara con el contexto guardado en la TSS respectiva.}
-\par{ El tamaño de la TSS es de 104 Bytes, donde se guardan todos los registros de 32 bits, todos los selectores de segemento y el puntero a comienzo de la pila Nivel 0, 1, 2 con sus respectivos SegSel, que seran utilizados en caso de llamar a una interrupcion de diferente nivel a la tarea.}
+\par{El Task State Segment o TSS, es una estructura especial del sistema utilizada para guardar los contextos de ejecución de una tarea al momento de dejarla para saltar a otra. Y ésta justamente comenzará con el contexto guardado en la TSS respectiva.}
+\par{ El tamaño de la TSS es de 104 Bytes, donde se guardan todos los registros de 32 bits, todos los selectores de segemento y el puntero al comienzo de la pila de Nivel 0, 1, 2 con sus respectivos SegSel, que seran utilizados en caso de llamar a una interrupcion de diferente nivel a la tarea.}
 
-\subsubsection*{Proceso de Inicialización de Tareas}
-\par{En primer lugar el sistema de multi-tasking requiere que haya una TSS destinada para la tarea inicial, esta TSS justamente es para cuando saltemos a la primer tarea a ejecutar el contexto actual, en el que estaba ejecutando el codigo, debe ser guardado en algun lado.}
-\par{Luego como mencionamos anteriormente, cada tarea comienza a ejecutar segun lo que el contexto de su TSS asignada diga, por lo que no puede haber valores \textsl{fruta} para ciertos registros escenciales como CR3, EIP, CS, etc... Por ello dentro de la seccion de codigo de kernel hacemos llamado a la funcion \textbf{tss\_inicializar} en la cual recorremos todas las TSS rellenando con los valores correspondientes a los elementos escenciales de la siguiente manera:  }
+\subsection{Proceso de Inicialización de Tareas}
+\par{En primer lugar el sistema de multi-tasking requiere que haya una TSS destinada para la tarea inicial; el propósito de ésta TSS es el de guardar el contexto previo a saltar a la primer tarea a ejecutar.}
+\par{Luego como mencionamos anteriormente, cada tarea comienza a ejecutar según el contexto de su TSS asignada, por lo que no puede haber valores \textsl{fruta} para ciertos registros escenciales como CR3, EIP, CS, etc... Por ello dentro de la sección de código de kernel llamamos a la función \textbf{tss\_inicializar} en la cual recorremos todas las TSS y las rellenamos con los valores correspondientes a los elementos escenciales de la siguiente manera:  }
 
 \begin{itemize}
 	\item \textbf{TSS\_Tareas}
@@ -36,4 +36,4 @@
 \end{itemize}
 
 
-\par{Por último a cada Page Directory de cada tarea, los incializamos segun como pide el enunciado, haciendo identity mapping como en el kernel y agregando el mapeo a partir de la posicion 0x40000000, a las paginas fisicas donde se encuentra el codigo de cada tarea.}
+\par{Por último a cada Page Directory de cada tarea, los incializamos segun como pide el enunciado, haciendo identity mapping como en el kernel y agregando el mapeo a partir de la posicion 0x40000000, a las páginas físicas a partir de la dirección 0x100000 y a éstas copiamos el código de las tareas el cual se encuentra a partir de la dirección física 0x10000.}
