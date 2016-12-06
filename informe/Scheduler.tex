@@ -24,7 +24,7 @@ Como bien vimos en la sección \ref{subsec:IDT}, cuando debemos eliminar un nav�
 
 \par{Como vimos en la sección \ref{subsec:IDT}, en nuestro TP la interrupción externa 32, la interrupción de reloj, funciona como regulador de los tiempos de las tareas. Cada navío tiene un tick de reloj para correr, si llama a una syscall, el tiempo restante de su quantum es destinado a la tarea idle. Las banderas, por su parte, también tienen un tick de reloj para ejecutarse, con la salvedad de que antes de cumplido este tiempo tienen que llamar a la syscall 0x66. En cada interrupción de reloj se determina cuál será la próxima tarea a ejecutarse.}
 \par{En particular, en nuestro TP, tenemos determinado que cada 3 quantum de tareas se corren \textbf{TODAS} las banderas "disponibles", es decir, las que no han sido eliminadas del scheduler por algún tipo de error.}
-\par{En resumen, las tareas/navíos se ejecutan en orden, cada 3 quantum se ejecutan las banderas que siguen en el scheduler, al cometer algún error el navío/bandera es eliminado del scheduler junto con su bandera/navío, la función proximo$\_$indice nos devuelve el índice de la tarea a ejecutarse, si es que la hay.} 
+\par{En resumen, los navíos se ejecutan en orden, y, cada 3 quantum se ejecutan las banderas que siguen en el scheduler, al cometer algún error el navío/bandera es eliminado del scheduler junto con su bandera/navío, la función proximo$\_$indice nos devuelve el índice de la tarea a ejecutarse, si es que la hay.} 
 \medskip
 \par{\textbf{¿Y qué sucede cuando no quedan tareas a ejecutarse?}}
 \par{Sigue corriendo indefinidamente la tarea idle. Situación que efectivamente ocurre en nuestro TP.}

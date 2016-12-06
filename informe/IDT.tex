@@ -1,30 +1,31 @@
 \section{IDT}
 \label{subsec:IDT}
-\par{La IDT, Interruption Descriptor Table, se encarga de almacenar descriptores de rutinas de atención sobre interrpuciones de software, de hardware, y expeciones. Este se representa como un arreglo de maximo 2**13 entradas, de tamaño 64 bits. Estos Descriptores cargan informacion sobre, donde se hubica dicha rutina de atencion, atributos de presente, o DPL (nivel de privilegio requerido para acceder a dicha interrupcion), y el selector de segmento que se va a utilizar, en general este selector es el de Código nivel 0, ya que una interrpucion suele necesitar de accesos a nivel Kernel.}
+\par{La IDT, Interruption Descriptor Table, se encarga de almacenar descriptores de rutinas de atención sobre interrupciones de software, de hardware, y excepciones. Éste se representa como un arreglo de, como máximo, 2$^{13}$ entradas, de tamaño 64 bits. Estos Descriptores contienen información sobre, por ejemplo; dónde se ubica dicha rutina de atención; atributos de presente; atributos de DPL (nivel de privilegio requerido para acceder a dicha interrupción); el selector de segmento que se va a utilizar, el cual, en general es de Código de nivel 0, ya que una interrupción suele necesitar de accesos a nivel Kernel.}
 
 \subsection{Rellenado de IDT}
 \begin{itemize}
-	\item {\bfseries Expeciones: }
-	\par{Por restricciones de Intel, desde la posicion 0 hasta la 19 es donde se van a hubicar los descriptores de rutinas de atencion sobre expeciones, segun el orden que indica el manual de Intel. Estas tienen los atributos de presente en 1 y el DPL en 3, pues no queremos que ninguna tarea de nivel usuario llame a una Exepcion intencionalmente. Luego las entradas entre la 20 y la 31 estan reservadas a futuras posible exepciones, o usos que Intel les proporcione.}
+	\item {\bfseries Excepciones: }
+	\par{Por restricciones de Intel, desde la posición 0 hasta la 19 es dónde se van a ubicar los descriptores de rutinas de atención sobre excepciones según el orden que indica el manual de Intel. Éstas tienen los atributos de presente en 1 y el DPL en 3, pues no queremos que ninguna tarea de nivel usuario llame a una excepcion intencionalmente. Luego las entradas entre la 20 y la 31 estan reservadas a futuras posibles excepciones, o usos que Intel les proporcione.}
 	
 	\item {\bfseries Interrupciones de Hardware: }
-	\par{ Estas se ubican en las primeras entradas libres a partir de la 32, en particular la 32 es la interrupcion de Reloj, y la 33 la interrupcion de teclado. Ambas entradas en nuestro TP estan seteadas con el SegSel = Cod\_L0, el bit de presente en 1, y DPL = 0.}
+	\par{ Éstas se ubican en las primeras entradas libres a partir de la 32, en particular en nuestro TP la 32 es la interrupción de Reloj, y la 33 la de teclado. Ambas entradas están seteadas con el SegSel = Cod\_L0, el bit de presente en 1, y DPL = 0.}
 	
-	\item {\bfseries Interrpuciones de Software: }
-	\par{Estas son seteadas a partir de posiciones mayores, en nuestro caso implementamos 2, en la entrada 80 y en la entrada 102. Donde la unica diferencia con las de Hardware respecto a los atributos, es que estas contienen DPL = 3, ya que queremos que puedan ser llamadas por tareas nivel usuario para ejecutar un codigo en nivel 0, esto en particular se le da el nombre de syscall.}
+	\item {\bfseries Interrupciones de Software: }
+	\par{En nuestro caso implementamos 2, en la entrada 80 y en la entrada 102. Donde la única diferencia con las de Hardware respecto a los atributos, es que éstas contienen DPL = 3, ya que queremos que puedan ser llamadas por tareas nivel usuario para ejecutar un código en nivel 0, a esto en particular se le da el nombre de syscall.}
 
 \end{itemize}
 
 \subsection{Proceso de identificación de interrupción requerida}
-\par{Cuando ocurre una interrpcion / exepción, el proceso basicamente es obtener el descriptor de interrupcion señalado por el Vector de Interrpciones, y de ahi saltar directamente a la rutina de atención. Ahora la forma en la que se carga dicho Vector es, para expeciones, el mismo procesador se encarga de indentificar cual es la posicion asignada a dicha interrupcion, dentro de la IDT segun Intel, y carga el vector con dicho valor.  Para interrupciones de Hardware se utiliza lo que es el PIC de interrupciones donde cuando un elemento externo solicita una interrpucion, estos estan ordenados en un orden especifico segun un handler de hardware, y este identifica cual de los aparatos fue el que la solicito, cargando de esta manera al Vector de Interrupciones. Y por último a una interrpucion de Software simplemente es el numero q le sigue a la instruccion "int" que es la utilizada para solicitar una interrpucion especifica.}
+\par{Cuando ocurre una interrupción el procesador obtiene el descriptor de ésta, obtiene el descriptor de segmento que se especifica en éste y así, salta a su rutina de atención añadiendo el offset que ofrece el primero.}
+\par{En el caso de las excepciones, es el procesador el que se encarga de indentificar cuál es la posición asignada a esa interrupción en la IDT; para interrupciones de Hardware es el PIC quien se encarga; y, por último, en cuanto a las interrupciones de Software, estas se invocan con la instrucción \textbf{INT 0x??}, por ende el inmediato que acompaña la instrucción es el índice de la IDT.}
 
 \subsection{Excepciones}
-\par{La rutina de atención a las excepciones es común a todos ellas. Esta se encarga de deshabilitar la tarea que ha caído en la interrupción, almacenar la información de la pila, y saltar a la tarea idle.}
+\par{La rutina de atención a las excepciones es común a todos ellas. Ésta se encarga de deshabilitar la tarea que ha caído en la interrupción, almacenar la información de la pila, y saltar a la tarea idle.}
 \par{Para esto simplemente llamamos a la función \textbf{deshabilitar$\_$tarea} con el índice del navío o la bandera que haya producido el error.}
 \subsection{Interrupción de reloj}
 \par{La rutina de atención a la interrupción de reloj llama a otras dos funciones; proximo$\_$reloj y sched. La primera se encarga de la animación del relojito de cada tarea. Sched se encarga de saltar a la siguiente tarea, ya sea un navío o una bandera.}
-\par{Cuenta con un contador el cual determina cuándo es momento de ejecutar todas las banderas y las funciones sched$\_$proximo$\_$indice y sched$\_$proxima$\_$bandera las cuales son explicadas es la sección \ref{subsec:Scheduler}.}
-\par{De esta manera sched pide el siguiente indice (de navío o bandera según corresponda) y salta a la tarea a la que este refiere. También contamos con un contador de tareas habilitadas, cuando este llega a 0 sched simplemente se limita a saltar a la tarea idle.}
+\par{Cuenta con un contador el cual determina cuándo es momento de ejecutar todas las banderas, y con las funciones sched$\_$proximo$\_$indice y sched$\_$proxima$\_$bandera las cuales son explicadas es la sección \ref{subsec:Scheduler}.}
+\par{De esta manera sched pide el siguiente índice (de navío o bandera según corresponda) y salta a la tarea a la que éste refiere. También contamos con un contador de tareas habilitadas, cuando este llega a 0 sched simplemente se limita a devolver el control a la tarea idle.}
 \subsection{Interrupción de teclado}
 \par{La interrupción 33 es la que se encarga del teclado, en nuestro caso sólo nos interesan 2 teclas de éste, \textbf{M} y \textbf{E}. La M nos muestra el mapa del juego, y la E el estado de los navíos y las banderas flameando.}
 \par{A continuación presentamos un pseudocódigo de la rutina de atención a la int 33.}
@@ -41,9 +42,11 @@ _isr33:
     popad
     iret
 \end{lstlisting}
-\par{La instrucción \textbf{in al, 0x60} guarda en al el scan code almacenado en el puerto 0x60 y luego utilizamos esta información para escribir en pantalla con la función \textbf{print$\_$numerito}.}
+\par{La instrucción \textbf{in al, 0x60} guarda en \textbf{al} el scan code almacenado en el puerto 0x60 y luego utilizamos esta información para escribir en pantalla con la función \textbf{print$\_$numerito}.}
 \par{Esta función se encargará de llamar a las funciones auxiliares necesarias para cumplir con lo establecido al principio de esta sección, mostrar el mapa si se presionó la tecla M, y la información de estados si fue la E.}
-\par{Las funcione encargada de imprimir en pantalla el mapa utiliza la información almacenada en posicionTareas, el cual es una matriz de 8x3, la cual guarda la posición de la pantalla en la que se encuentra cada página de cada tarea, esto se actualiza en la función actualizar$\_$mapa y también el valor de últimoMisil. La función encargada de imprimir la pantalla de estados utiliza la matriz paginasTareas, la matriz flags, el valor de ultimoError y la matriz de debug entre otras cosas. La primera, lamentamos si confunde su nombre, es una matriz que contiene las posiciones de cada pagina de cada tarea, pero estas en lugar de estar almacenadas como enteros, son una cadena de caracteres, de esta forma nos es más sencillo imprimirlos en la pantalla de estados. La información de la matriz debug nos la provee la pila cuando se produce algún error o alguna interrupción externa. Y en ultimoError se nos informa cuál fue el último error cometido, como bien nos dice su nombre.}
+\par{La función encargada de imprimir en pantalla el mapa utiliza la información almacenada en posicionTareas, el cual es una matriz de 8x3, la cual guarda la posición de la pantalla en la que se encuentra cada página de cada tarea, esto se actualiza en la función actualizar$\_$mapa y también el valor de últimoMisil.}
+\par{ La función encargada de imprimir la pantalla de estados utiliza la matriz paginasTareas, la matriz flags, el valor de ultimoError y la matriz de debug entre otras cosas.}
+\par{ La primera, lamentamos si confunde su nombre, es una matriz que contiene las posiciones de cada página de cada tarea, pero éstas, en lugar de estar almacenadas como enteros, son una cadena de caracteres; de esta forma nos es más sencillo imprimirlos en la pantalla de estados. La información de la matriz debug nos la provee la pila cuando se produce algún error o alguna interrupción externa. Y en ultimoError se nos informa cuál fue el último error cometido, como bien nos dice su nombre.}
 \subsection{Int 80 (0x50)}
 \par{Esta es una syscall que sólo pueden utilizar los navíos, es conciderado un error si una bandera la llama. Esta syscall cuenta con 3 funcionalidades; \textbf{navegar}, \textbf{fondear} y \textbf{cañonear}. Depende de los parámetros con los que es llamada se ejecutan las distintas funcionalidades.}
 \par{A continuación presentamos un pseudocódigo de la rutina de atención a la interrupción, lo presentamos en lenguaje C para hacer más sencillo su entendimiento.}
